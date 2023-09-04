@@ -1,0 +1,39 @@
+{
+  "project_info": {
+    "project_number": "1087625241723",
+    "project_id": "puconnect-9eae8",
+    "storage_bucket": "puconnect-9eae8.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:1087625241723:android:ada1dfd9415c7689136ede",
+        "android_client_info": {
+          "package_name": "com.example.puconnect"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "1087625241723-er6iqpfdl3njm168929tlb6j723cgkgi.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyA2ZZQCgJTpSWg5B4XF-UVQe57VNJ8vQPs"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "1087625241723-er6iqpfdl3njm168929tlb6j723cgkgi.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

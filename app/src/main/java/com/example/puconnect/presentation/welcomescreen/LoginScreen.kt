@@ -214,7 +214,7 @@ fun LoginScreen(
                                     inclusive = true
                                 }
                             }
-                        }else{
+                        } else {
                             Toast(message = "Login In Failed")
                         }
                     }
@@ -225,9 +225,10 @@ fun LoginScreen(
                 }
             }
 
-            Text(text = "New User? Sign Up", color = Color.Black, modifier = Modifier.padding(8.dp)
+            Text(text = "New User? Sign Up", color = Color.Black, modifier = Modifier
+                .padding(8.dp)
                 .clickable {
-                    navController.navigate(Graphs.SIGNIN){
+                    navController.navigate(Graphs.SIGNIN) {
                         launchSingleTop = true
                     }
                 })

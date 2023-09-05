@@ -1,5 +1,6 @@
 package com.example.puconnect.data
 
+import android.util.Log
 import com.example.puconnect.domain.model.User
 import com.example.puconnect.domain.repository.AuthenticationRepository
 import com.example.puconnect.util.Constants
@@ -64,15 +65,15 @@ class AuthenticationRepositoryImplementation @Inject constructor(
         operationSuccessful=false
         try {
             emit(Response.Loading)
-            auth.createUserWithEmailAndPassword(email, password).addOnSuccessListener {
-                operationSuccessful=true
+            val authResult = auth.createUserWithEmailAndPassword(email, password).await()
+            if(authResult.user != null){
+                operationSuccessful = true
             }
             if (operationSuccessful){
                 val userId = auth.currentUser?.uid!!
                 val obj = User(userName = userName, userId = userId, password = password, email = email)
                 firestore.collection(Constants.COLLECTION_NAME_USERS).document(userId).set(obj).addOnSuccessListener {
-
-                }.await()
+                }
                 emit(Response.Success(operationSuccessful))
             }else{
                 Response.Success(operationSuccessful)

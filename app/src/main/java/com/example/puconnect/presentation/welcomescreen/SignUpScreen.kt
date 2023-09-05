@@ -148,7 +148,8 @@ fun SignUpScreen(
             Spacer(modifier = Modifier.height(9.dp))
 
             OutlinedTextField(
-                value = userNameState.value, onValueChange = {
+                value = userNameState.value,
+                onValueChange = {
                     userNameState.value = it
                 },
                 modifier = Modifier.padding(10.dp),
@@ -212,7 +213,8 @@ fun SignUpScreen(
                     color = Color.Black
                 )
                 when (val response = authenticationViewModel.signUpState.value) {
-                    Response.Loading -> {
+                    is Response.Loading -> {
+//                        issue with the progress indicator, it shows only in the bottom part
                         CircularProgressIndicator(
                             modifier = Modifier.fillMaxSize()
                         )
@@ -221,11 +223,11 @@ fun SignUpScreen(
                     is Response.Success -> {
                         if (response.data) {
                             navController.navigate(Graphs.MAIN) {
-                                popUpTo(Graphs.LOGIN) {
+                                popUpTo(Graphs.SIGNIN) {
                                     inclusive = true
                                 }
                             }
-                        }else{
+                        } else {
                             Toast(message = "Sign Up Failed")
                         }
                     }
@@ -236,12 +238,15 @@ fun SignUpScreen(
                 }
             }
 
-            Text(text = "Already have an Account? Log In", color = Color.Black, modifier = Modifier.padding(8.dp)
-                .clickable {
-                    navController.navigate(Graphs.SIGNIN){
-                        launchSingleTop = true
-                    }
-                })
+            Text(text = "Already have an Account? Log In",
+                color = Color.Black,
+                modifier = Modifier
+                    .padding(8.dp)
+                    .clickable {
+                        navController.navigate(Graphs.SIGNIN) {
+                            launchSingleTop = true
+                        }
+                    })
 
             Spacer(modifier = Modifier.height(40.dp))
 

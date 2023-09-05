@@ -1,4 +1,4 @@
-package com.example.puconnect.domain.use_cases
+package com.example.puconnect.domain.use_cases.AuthenticationUseCases
 
 import com.example.puconnect.domain.repository.AuthenticationRepository
 import javax.inject.Inject

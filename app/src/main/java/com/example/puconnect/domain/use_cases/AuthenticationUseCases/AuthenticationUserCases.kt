@@ -1,4 +1,4 @@
-package com.example.puconnect.domain.use_cases
+package com.example.puconnect.domain.use_cases.AuthenticationUseCases
 
 data class AuthenticationUserCases (
     val isUserAuthenticated: isUserAuthenticated,

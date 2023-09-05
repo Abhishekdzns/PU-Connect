@@ -105,5 +105,6 @@ dependencies {
 
     // Coroutines
     implementation(libs.kotlinx.coroutines.android)
-    
+    // flow layout
+    implementation (libs.accompanist.flowlayout)
 }

@@ -1,4 +1,5 @@
 [versions]
+accompanist-flowlayout = "0.20.0"
 accompanist-navigation-animation = "0.29.2-rc"
 agp = "8.3.0-alpha01"
 com-google-relay-gradle-plugin = "0.3.08"
@@ -26,6 +27,7 @@ firebase-firestore-ktx = "24.7.1"
 firebase-storage-ktx = "20.2.1"
 
 [libraries]
+accompanist-flowlayout = { module = "com.google.accompanist:accompanist-flowlayout", version.ref = "accompanist-flowlayout" }
 accompanist-navigation-animation = { module = "com.google.accompanist:accompanist-navigation-animation", version.ref = "accompanist-navigation-animation" }
 androidx-lifecycle-lifecycle-viewmodel-compose = { module = "androidx.lifecycle:lifecycle-viewmodel-compose", version.ref = "lifecycle-runtime-ktx" }
 androidx-hilt-navigation-compose = { module = "androidx.hilt:hilt-navigation-compose", version.ref = "hilt-navigation-compose" }

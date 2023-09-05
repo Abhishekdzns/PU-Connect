@@ -1,13 +1,19 @@
 package com.example.puconnect.di
 
 import com.example.puconnect.data.AuthenticationRepositoryImplementation
+import com.example.puconnect.data.UserRepositoryImpl
 import com.example.puconnect.domain.repository.AuthenticationRepository
-import com.example.puconnect.domain.use_cases.AuthenticationUserCases
-import com.example.puconnect.domain.use_cases.FirebaseAuthState
-import com.example.puconnect.domain.use_cases.FirebaseSignIn
-import com.example.puconnect.domain.use_cases.FirebaseSignOut
-import com.example.puconnect.domain.use_cases.FirebaseSignUp
-import com.example.puconnect.domain.use_cases.isUserAuthenticated
+import com.example.puconnect.domain.repository.UserRepository
+import com.example.puconnect.domain.use_cases.AuthenticationUseCases.AuthenticationUserCases
+import com.example.puconnect.domain.use_cases.AuthenticationUseCases.FirebaseAuthState
+import com.example.puconnect.domain.use_cases.AuthenticationUseCases.FirebaseSignIn
+import com.example.puconnect.domain.use_cases.AuthenticationUseCases.FirebaseSignOut
+import com.example.puconnect.domain.use_cases.AuthenticationUseCases.FirebaseSignUp
+import com.example.puconnect.domain.use_cases.AuthenticationUseCases.isUserAuthenticated
+import com.example.puconnect.domain.use_cases.UserUseCases.GetUserDetails
+import com.example.puconnect.domain.use_cases.UserUseCases.SetSkills
+import com.example.puconnect.domain.use_cases.UserUseCases.SetUserDetails
+import com.example.puconnect.domain.use_cases.UserUseCases.UserUseCases
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.storage.FirebaseStorage
@@ -46,11 +52,26 @@ object PuconnectModule {
 
     @Singleton
     @Provides
-    fun provideAuthUseCases(repositoryImplementation: AuthenticationRepositoryImplementation)=AuthenticationUserCases(
+    fun provideAuthUseCases(repositoryImplementation: AuthenticationRepositoryImplementation)=
+        AuthenticationUserCases(
         isUserAuthenticated = isUserAuthenticated(repositoryImplementation),
         firebaseAuthState = FirebaseAuthState(repositoryImplementation),
         firebaseSignIn = FirebaseSignIn(repositoryImplementation),
         firebaseSignOut = FirebaseSignOut(repositoryImplementation),
         firebaseSignUp = FirebaseSignUp(repositoryImplementation)
     )
+
+    @Singleton
+    @Provides
+    fun provideUserRepository(firestore: FirebaseFirestore):UserRepository{
+        return UserRepositoryImpl(firestore)
+    }
+    @Singleton
+    @Provides
+    fun provideUserUseCases(userRepository: UserRepository)=
+        UserUseCases(
+            getUserDetails = GetUserDetails(userRepository),
+            setUserDetails = SetUserDetails(userRepository),
+            setSkills = SetSkills(userRepository)
+        )
 }

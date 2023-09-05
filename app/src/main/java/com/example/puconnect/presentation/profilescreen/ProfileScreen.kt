@@ -16,7 +16,13 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.grid.GridCells
+import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
+import androidx.compose.foundation.lazy.grid.items
+import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.foundation.verticalScroll
+import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.Icon
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -24,55 +30,93 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
+import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.vectorResource
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
+import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import androidx.navigation.NavController
+import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavHostController
 import com.example.puconnect.R
+import com.example.puconnect.domain.model.Skill
+import com.example.puconnect.domain.model.User
+import com.example.puconnect.presentation.Toast
+import com.example.puconnect.presentation.ViewModels.UserViewModel
 import com.example.puconnect.presentation.common.VerticalSpacer
 import com.example.puconnect.presentation.homescreen.components.HorizontalSpacer
 import com.example.puconnect.presentation.navigation.Destinations
 import com.example.puconnect.ui.theme.gilroy
 import com.example.puconnect.ui.theme.textFieldBorder
+import com.example.puconnect.util.Response
+import com.google.accompanist.flowlayout.FlowMainAxisAlignment
+import com.google.accompanist.flowlayout.FlowRow
+import com.google.accompanist.flowlayout.SizeMode
 
 @Composable
 fun ProfileScreen(
     paddingValues: PaddingValues,
     navController: NavHostController,
 ) {
-    Column (
-        modifier = Modifier
-            .fillMaxSize()
-            .padding(horizontal = 20.dp)
-            .padding(paddingValues = paddingValues)
+    val userViewModel: UserViewModel = hiltViewModel()
+    userViewModel.getUserInfo()
+    when (val response = userViewModel.getUserData.value) {
+        is Response.Error -> {
+            Toast(message = "Unexpected Error")
+        }
 
-    ){
-        
-        VerticalSpacer(height = 19)
+        Response.Loading -> {
+            CircularProgressIndicator()
+        }
 
-        ProfileSection(onEditProfileClick = {navController.navigate(Destinations.EditProfileScreen.route)})
+        is Response.Success -> {
+            if (response.data != null) {
+                val obj = response.data
+                Column(
+                    modifier = Modifier
+                        .fillMaxSize()
+                        .padding(horizontal = 20.dp)
+                        .padding(paddingValues = paddingValues)
 
-        ProfileScreenSkillSection(
-            onEditClick = {navController.navigate(Destinations.EditSkillsScreen.route)},
-            onEdit2Click = {navController.navigate(Destinations.EditProfileScreen.route)}
-            )
 
+                ) {
 
+                    VerticalSpacer(height = 19)
 
+                    ProfileSection(
+                        onEditProfileClick = { navController.navigate(Destinations.EditProfileScreen.route) },
+                        obj
+                    )
 
+                    ProfileScreenSkillSection(
+                        onEditClick = { navController.navigate(Destinations.EditSkillsScreen.route) },
+                        onEdit2Click = { navController.navigate(Destinations.EditProfileScreen.route) },
+                        obj
+                    )
+
+//                    VerticalSpacer(height = 24)
+//
+//                    AboutMeSection(
+//                        onEdit2Click = { navController.navigate(Destinations.EditProfileScreen.route) },
+//                        obj = obj
+//                    )
+                }
+            }
+        }
     }
+
 }
 
 
 @Composable
 fun ProfileSection(
-    onEditProfileClick: () -> Unit
+    onEditProfileClick: () -> Unit,
+    obj: User
 ) {
-    Box (
+    Box(
         modifier = Modifier
             .fillMaxWidth()
             .padding(bottom = 16.dp)
@@ -91,7 +135,7 @@ fun ProfileSection(
             color = Color.Black
         )
 
-        Box (
+        Box(
             modifier = Modifier
                 .height(32.dp)
                 .width(90.dp)
@@ -110,7 +154,7 @@ fun ProfileSection(
             )
         }
 
-        Row (
+        Row(
             modifier = Modifier
                 .fillMaxWidth()
                 .height(140.dp)
@@ -125,7 +169,7 @@ fun ProfileSection(
             horizontalArrangement = Arrangement.SpaceBetween
 
         ) {
-            Row (
+            Row(
                 verticalAlignment = Alignment.CenterVertically
             ) {
 
@@ -143,7 +187,7 @@ fun ProfileSection(
                 ) {
 
                     Text(
-                        text = "Siddhi Patel",
+                        text = obj.name,
                         fontFamily = gilroy,
                         fontSize = 18.sp,
                         fontWeight = FontWeight.W600,
@@ -154,7 +198,7 @@ fun ProfileSection(
                     VerticalSpacer(height = 12)
 
                     Text(
-                        text = "Web Development",
+                        text = obj.role,
                         fontFamily = gilroy,
                         fontSize = 12.sp,
                         fontWeight = FontWeight.W500,
@@ -181,12 +225,13 @@ fun ProfileSection(
 fun ProfileScreenSkillSection(
     onEditClick: () -> Unit,
     onEdit2Click: () -> Unit,
+    obj: User,
 ) {
     LazyColumn() {
         item {
             VerticalSpacer(height = 8)
 
-            Row (
+            Row(
                 verticalAlignment = Alignment.CenterVertically,
                 modifier = Modifier.fillMaxWidth(),
                 horizontalArrangement = Arrangement.SpaceBetween
@@ -200,7 +245,7 @@ fun ProfileScreenSkillSection(
                     color = Color.Black
                 )
 
-                Row (
+                Row(
                     modifier = Modifier
                         .width(77.dp)
                         .height(32.dp)
@@ -208,10 +253,11 @@ fun ProfileScreenSkillSection(
                             shape = RoundedCornerShape(32.dp),
                             color = textFieldBorder,
                             width = (0.25).dp
-                        ).clickable { onEditClick() },
+                        )
+                        .clickable { onEditClick() },
                     horizontalArrangement = Arrangement.Center,
                     verticalAlignment = Alignment.CenterVertically
-                ){
+                ) {
 
                     Text(
                         text = "Edit",
@@ -235,62 +281,52 @@ fun ProfileScreenSkillSection(
             }
         }
 
-        item {
-            SkillCircles(onEdit2Click = {onEdit2Click()})
-        }
-
-
     }
+    VerticalSpacer(height = 8)
+
+    SkillCircles(onEdit2Click = { onEdit2Click }, obj = obj)
 }
 
 @Composable
 fun SkillCircles(
-    onEdit2Click: () -> Unit
+    onEdit2Click: () -> Unit,
+    obj: User
 ) {
-    Column (
+    LazyColumn(
         modifier = Modifier.fillMaxWidth()
-    ){
-        VerticalSpacer(height = 24)
-        Row (
-            modifier = Modifier.fillMaxWidth(),
-            verticalAlignment = Alignment.Top,
-            horizontalArrangement = Arrangement.SpaceBetween
-        ) {
-            
-            MyCircle(percentage = 62, skillName = "Figma")
-            MyCircle(percentage = 96, skillName = "Photoshop")
-            MyCircle(percentage = 100, skillName = "Web\nDevelopment")
+    ) {
 
+        item {
+            val itemSize: Dp = (LocalConfiguration.current.screenWidthDp.dp / 3)
+            FlowRow(
+                mainAxisSize = SizeMode.Expand,
+                mainAxisAlignment = FlowMainAxisAlignment.SpaceBetween,
+            ) {
+                obj.skills.forEach { skill ->
+                    MyCircle(
+                        percentage = skill.percentage.toInt(),
+                        skillName = skill.skillName
+                    )
+                }
+            }
         }
 
-        VerticalSpacer(height = 32)
+        item {
+            VerticalSpacer(height = 24)
 
-        Row (
-            modifier = Modifier.fillMaxWidth(),
-
-            verticalAlignment = Alignment.Top,
-            horizontalArrangement = Arrangement.SpaceBetween
-        ) {
-
-            MyCircle(percentage = 100, skillName = "Photography")
-            MyCircle(percentage = 38, skillName = "Android\nDevelopment")
-            MyCircle(percentage = 83, skillName = "Canva")
-
+            AboutMeSection(onEdit2Click = { onEdit2Click() }, obj)
         }
-
-        VerticalSpacer(height = 24)
-
-        AboutMeSection(onEdit2Click = {onEdit2Click()})
-
     }
+
 }
 
 @Composable
 fun AboutMeSection(
-    onEdit2Click: () -> Unit
+    onEdit2Click: () -> Unit,
+    obj: User
 ) {
 
-    Column (
+    Column(
         modifier = Modifier.fillMaxWidth(),
     ) {
         Row(
@@ -315,7 +351,8 @@ fun AboutMeSection(
                         shape = RoundedCornerShape(32.dp),
                         color = textFieldBorder,
                         width = (0.25).dp
-                    ).clickable { onEdit2Click() },
+                    )
+                    .clickable { onEdit2Click() },
                 horizontalArrangement = Arrangement.Center,
                 verticalAlignment = Alignment.CenterVertically
             ) {
@@ -344,7 +381,7 @@ fun AboutMeSection(
 
         VerticalSpacer(height = 24)
 
-        Row (
+        Row(
             modifier = Modifier
                 .fillMaxWidth()
                 .height(56.dp)
@@ -354,7 +391,7 @@ fun AboutMeSection(
                     width = (0.25).dp
                 ),
             verticalAlignment = Alignment.CenterVertically
-        ){
+        ) {
 
             HorizontalSpacer(width = 16)
 
@@ -368,7 +405,7 @@ fun AboutMeSection(
             HorizontalSpacer(width = 16)
 
             Text(
-                text = "Located in Vadodara, Gujarat",
+                text = "Located in ${obj.city}",
                 fontFamily = gilroy,
                 fontSize = 14.sp,
                 fontWeight = FontWeight.W500,
@@ -379,7 +416,7 @@ fun AboutMeSection(
 
         VerticalSpacer(height = 16)
 
-        Row (
+        Row(
             modifier = Modifier
                 .fillMaxWidth()
                 .height(56.dp)
@@ -389,7 +426,7 @@ fun AboutMeSection(
                     width = (0.25).dp
                 ),
             verticalAlignment = Alignment.CenterVertically
-        ){
+        ) {
 
             HorizontalSpacer(width = 16)
 
@@ -403,7 +440,7 @@ fun AboutMeSection(
             HorizontalSpacer(width = 16)
 
             Text(
-                text = "Studies at PIET",
+                text = "Studies at ${obj.college}",
                 fontFamily = gilroy,
                 fontSize = 14.sp,
                 fontWeight = FontWeight.W500,
@@ -437,7 +474,8 @@ fun AboutMeSection(
                         shape = RoundedCornerShape(32.dp),
                         color = textFieldBorder,
                         width = (0.25).dp
-                    ).clickable { onEdit2Click() },
+                    )
+                    .clickable { onEdit2Click() },
                 horizontalArrangement = Arrangement.Center,
                 verticalAlignment = Alignment.CenterVertically
             ) {
@@ -468,13 +506,31 @@ fun AboutMeSection(
         VerticalSpacer(height = 16)
 
 
-        Icon(
-            modifier = Modifier.size(32.dp),
-            imageVector = ImageVector.vectorResource(id = R.drawable.bluelogo),
-            contentDescription = null,
-            tint = Color.Unspecified
-        )
-        
+        Row(
+            modifier = Modifier
+                .fillMaxWidth(),
+            verticalAlignment = Alignment.CenterVertically
+        ) {
+
+            Icon(
+                modifier = Modifier.size(20.dp),
+                imageVector = ImageVector.vectorResource(id = R.drawable.bluelogo),
+                contentDescription = null,
+            )
+
+            HorizontalSpacer(width = 16)
+
+            Text(
+                text = obj.extraUrl,
+                fontFamily = gilroy,
+                fontSize = 14.sp,
+                fontWeight = FontWeight.W500,
+                lineHeight = 16.98.sp,
+                color = Color.Black
+            )
+
+        }
+
         VerticalSpacer(height = 43)
 
         Text(
@@ -548,10 +604,10 @@ fun AboutMeSection(
         VerticalSpacer(height = 39)
 
 
-        Row (
+        Row(
             modifier = Modifier.fillMaxWidth(),
             horizontalArrangement = Arrangement.Center
-        ){
+        ) {
 
             Text(
                 text = "Version S.A.M 1.0.0",
@@ -563,7 +619,7 @@ fun AboutMeSection(
             )
 
         }
-        
+
         VerticalSpacer(height = 21)
     }
 

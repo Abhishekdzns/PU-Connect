@@ -4,7 +4,7 @@ import androidx.compose.runtime.State
 import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.example.puconnect.domain.use_cases.AuthenticationUserCases
+import com.example.puconnect.domain.use_cases.AuthenticationUseCases.AuthenticationUserCases
 import com.example.puconnect.util.Response
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.launch

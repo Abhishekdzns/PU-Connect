@@ -8,7 +8,11 @@ data class User(
     var password: String = "",
     var imageUrl: String = "",
     var role: String = "",
-    var skills: List<String> = emptyList(),
+    var skills: List<Skill> = emptyList(),
     var projects: List<String> = emptyList(),
+    var extraUrl: String = "",
+    var phoneNo: String = "",
+    var college: String = "",
+    var city: String = "",
     var totalPosts: String = "",
 )

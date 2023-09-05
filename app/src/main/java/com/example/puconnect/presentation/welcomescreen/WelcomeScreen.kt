@@ -25,6 +25,11 @@ import androidx.compose.material3.Divider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.alpha
@@ -40,16 +45,42 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavHostController
 import com.example.puconnect.R
+import com.example.puconnect.presentation.Authentication.AuthenticationViewModel
 import com.example.puconnect.presentation.homescreen.components.HorizontalSpacer
+import com.example.puconnect.presentation.navigation.Destinations
 import com.example.puconnect.presentation.navigation.Graphs
 import com.example.puconnect.ui.theme.addressColor
 import com.example.puconnect.ui.theme.gilroy
 import com.example.puconnect.ui.theme.textFieldBorder
+import kotlinx.coroutines.delay
 
 @Composable
 fun WelcomeScreen(
-    navController: NavHostController
+    navController: NavHostController,
+    authenticationViewModel: AuthenticationViewModel
 ) {
+    val authValue = authenticationViewModel.isUserAuthenticated
+    var startAnimation by remember { mutableStateOf(false) }
+
+    LaunchedEffect(key1 = true) {
+        startAnimation = true
+        if (authValue) {
+            navController.navigate(Graphs.MAIN) {
+                popUpTo(Graphs.AUTH) {
+                    inclusive = true
+                }
+            }
+        }
+//        not neded for welcomescreen will implement in splashscreen //TODO
+//        else{
+//            navController.navigate(Destinations.WelcomeScreen.route){
+//                popUpTo(Destinations.SplashScreen.route){
+//                    inclusive = true
+//                }
+//            }
+//        }
+
+    }
 
     Log.d("TEST", "works fine")
     Column(

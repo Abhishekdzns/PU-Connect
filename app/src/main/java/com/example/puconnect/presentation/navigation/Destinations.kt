@@ -11,6 +11,9 @@ object Graphs {
 
 
 sealed class Destinations(val route: String) {
+
+    object SplashScreen: Destinations("splash")
+    object WelcomeScreen: Destinations("auth")
     object HomeScreen: Destinations("home")
     object CodingGuildScreen: Destinations("code")
     object AiGuildScreen: Destinations("ai")

@@ -1,6 +1,8 @@
 [versions]
 accompanist-navigation-animation = "0.29.2-rc"
 agp = "8.3.0-alpha01"
+com-google-relay-gradle-plugin = "0.3.08"
+google-services = "4.3.15"
 hilt-android-compiler = "2.44"
 hilt-android = "2.44"
 hilt-navigation-compose = "1.0.0"
@@ -34,7 +36,9 @@ androidx-navigation-compose = { module = "androidx.navigation:navigation-compose
 androidx-work-runtime-ktx = { module = "androidx.work:work-runtime-ktx", version.ref = "work-runtime-ktx" }
 androidx-hilt-compiler = { module = "androidx.hilt:hilt-compiler", version.ref = "hilt-compiler" }
 androidx-hilt-work = { module = "androidx.hilt:hilt-work", version.ref = "hilt-work" }
+com-google-relay-gradle-plugin = { module = "com.google.relay:com.google.relay.gradle.plugin", version.ref = "com-google-relay-gradle-plugin" }
 core-ktx = { group = "androidx.core", name = "core-ktx", version.ref = "core-ktx" }
+google-services = { module = "com.google.gms:google-services", version.ref = "google-services" }
 hilt-android-compiler = { module = "com.google.dagger:hilt-android-compiler", version.ref = "hilt-android-compiler" }
 hilt-android = { module = "com.google.dagger:hilt-android", version.ref = "hilt-android" }
 junit = { group = "junit", name = "junit", version.ref = "junit" }

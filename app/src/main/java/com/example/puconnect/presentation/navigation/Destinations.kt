@@ -6,6 +6,8 @@ import com.example.puconnect.R
 object Graphs {
     const val AUTH = "auth"
     const val MAIN = "main"
+    const val LOGIN = "login"
+    const val SIGNIN = "login"
     const val SPLASH = "splash"
 }
 

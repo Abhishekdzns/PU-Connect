@@ -4,6 +4,7 @@ import android.util.Log
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -17,79 +18,59 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.layout.wrapContentHeight
-import androidx.compose.foundation.layout.wrapContentWidth
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
+import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.Divider
-import androidx.compose.material3.Icon
+import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.LaunchedEffect
-import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
-import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.alpha
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.vectorResource
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavHostController
 import com.example.puconnect.R
 import com.example.puconnect.presentation.Authentication.AuthenticationViewModel
+import com.example.puconnect.presentation.Toast
 import com.example.puconnect.presentation.homescreen.components.HorizontalSpacer
-import com.example.puconnect.presentation.navigation.Destinations
 import com.example.puconnect.presentation.navigation.Graphs
 import com.example.puconnect.ui.theme.addressColor
 import com.example.puconnect.ui.theme.gilroy
 import com.example.puconnect.ui.theme.textFieldBorder
-import kotlinx.coroutines.delay
+import com.example.puconnect.util.Response
 
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun WelcomeScreen(
+fun LoginScreen(
     navController: NavHostController,
     authenticationViewModel: AuthenticationViewModel
 ) {
-    val authValue = authenticationViewModel.isUserAuthenticated
-    var startAnimation by remember { mutableStateOf(false) }
-
-    LaunchedEffect(key1 = true) {
-        startAnimation = true
-        if (authValue) {
-            navController.navigate(Graphs.MAIN) {
-                popUpTo(Graphs.AUTH) {
-                    inclusive = true
-                }
-            }
-        }
-//        not neded for welcomescreen will implement in splashscreen //TODO
-//        else{
-//            navController.navigate(Destinations.WelcomeScreen.route){
-//                popUpTo(Destinations.SplashScreen.route){
-//                    inclusive = true
-//                }
-//            }
-//        }
-
-    }
-
     Log.d("TEST", "works fine")
     Column(
         verticalArrangement = Arrangement.SpaceBetween,
         horizontalAlignment = Alignment.CenterHorizontally,
-        modifier = Modifier.fillMaxSize().navigationBarsPadding()
+        modifier = Modifier
+            .fillMaxSize()
+            .navigationBarsPadding()
     ) {
 
-        Column (
+
+        Column(
             horizontalAlignment = Alignment.CenterHorizontally,
             modifier = Modifier.fillMaxWidth()
         ) {
@@ -157,68 +138,34 @@ fun WelcomeScreen(
                 .padding(horizontal = 20.dp)
         ) {
 
-            Button(
-                shape = RoundedCornerShape(4.dp),
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .height(56.dp)
-                    .background(
-                        shape = RoundedCornerShape(4.dp),
-                        color = Color.Black
-                    ),
-                onClick = { navController.navigate(Graphs.MAIN) },
-                colors = ButtonDefaults.buttonColors(containerColor = Color.Black)
-            ) {
-
-                Image(
-                    modifier = Modifier.size(20.dp),
-                    painter = painterResource(id = R.drawable.googleimage),
-                    contentDescription = null
-                )
-
-                HorizontalSpacer(width = 16)
-
-                Text(
-                    fontFamily = gilroy,
-
-                    text = "Continue with Google",
-                    fontWeight = FontWeight.W500,
-                    fontSize = 14.sp,
-                    lineHeight = 16.98.sp,
-                    color = Color.White
-                )
-
+            val emailState = remember {
+                mutableStateOf("")
+            }
+            val passwordState = remember {
+                mutableStateOf("")
             }
 
             Spacer(modifier = Modifier.height(9.dp))
 
-            Row(
-                modifier = Modifier.fillMaxWidth(),
-                verticalAlignment = Alignment.CenterVertically
-            ) {
-                Divider(
-                    modifier = Modifier.weight(0.5f),
-                    color = addressColor,
-                    thickness = (0.25).dp
-                )
+            OutlinedTextField(value = emailState.value, onValueChange = {
+                emailState.value = it
+            },
+                modifier = Modifier.padding(10.dp),
+                label = {
+                    Text(text = "Enter your email")
+                }
+            )
 
-                Text(
-                    fontFamily = gilroy,
-                    modifier = Modifier.padding(horizontal = 8.dp),
-                    text = "or",
-                    fontWeight = FontWeight.W500,
-                    fontSize = 14.sp,
-                    lineHeight = 16.98.sp,
-                    color = addressColor
-                )
-
-                Divider(
-                    modifier = Modifier.weight(0.5f),
-                    color = addressColor,
-                    thickness = (0.25).dp
-                )
-
-            }
+            OutlinedTextField(
+                value = passwordState.value, onValueChange = {
+                    passwordState.value = it
+                },
+                modifier = Modifier.padding(10.dp),
+                label = {
+                    Text(text = "Enter your password")
+                },
+                visualTransformation = PasswordVisualTransformation()
+            )
 
             Spacer(modifier = Modifier.height(9.dp))
 
@@ -236,20 +183,54 @@ fun WelcomeScreen(
                         shape = RoundedCornerShape(4.dp),
                         color = Color.White
                     ),
-                onClick = { navController.navigate(Graphs.LOGIN) },
+                onClick = {
+                    authenticationViewModel.signIn(
+                        emailState.value,
+                        passwordState.value
+                    )
+                },
                 colors = ButtonDefaults.buttonColors(containerColor = Color.White)
             ) {
 
                 Text(
                     fontFamily = gilroy,
-                    text = "Continue with Email",
+                    text = "Log In",
                     fontWeight = FontWeight.W500,
                     fontSize = 14.sp,
                     lineHeight = 16.98.sp,
                     color = Color.Black
                 )
+                when (val response = authenticationViewModel.signInState.value) {
+                    Response.Loading -> {
+                        CircularProgressIndicator(
+                            modifier = Modifier.fillMaxSize()
+                        )
+                    }
 
+                    is Response.Success -> {
+                        if (response.data) {
+                            navController.navigate(Graphs.MAIN) {
+                                popUpTo(Graphs.LOGIN) {
+                                    inclusive = true
+                                }
+                            }
+                        }else{
+                            Toast(message = "Login In Failed")
+                        }
+                    }
+
+                    is Response.Error -> {
+                        Toast(message = response.message)
+                    }
+                }
             }
+
+            Text(text = "New User? Sign Up", color = Color.Black, modifier = Modifier.padding(8.dp)
+                .clickable {
+                    navController.navigate(Graphs.SIGNIN){
+                        launchSingleTop = true
+                    }
+                })
 
             Spacer(modifier = Modifier.height(40.dp))
 
@@ -260,6 +241,6 @@ fun WelcomeScreen(
 
 @Preview(showBackground = true)
 @Composable
-fun WelcomeScreenPreview() {
+fun LoginScreenPreview() {
     //WelcomeScreen()
 }

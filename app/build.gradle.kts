@@ -5,6 +5,7 @@ plugins {
     id("com.google.relay") version ("0.3.02")
     id("kotlin-kapt")
     id("dagger.hilt.android.plugin")
+    id("com.google.gms.google-services")
 }
 
 android {

@@ -1,7 +1,8 @@
 // Top-level build file where you can add configuration options common to all sub-projects/modules.
 buildscript {
     dependencies {
-        classpath("com.google.relay:com.google.relay.gradle.plugin:0.3.08")
+        classpath(libs.com.google.relay.gradle.plugin)
+        classpath (libs.google.services)
     }
 }
 

@@ -42,9 +42,11 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavHostController
 import com.example.puconnect.R
 import com.example.puconnect.mockdata.profile.allGenres
+import com.example.puconnect.presentation.ViewModels.SkillsViewModel
 import com.example.puconnect.presentation.common.VerticalSpacer
 import com.example.puconnect.ui.theme.addressColor
 import com.example.puconnect.ui.theme.gilroy
@@ -55,7 +57,8 @@ import com.example.puconnect.ui.theme.textFieldBorder
 fun SkillsScreen(
     navController: NavHostController
 ) {
-
+    val skillsViewModel:SkillsViewModel = hiltViewModel()
+    skillsViewModel
     Scaffold (
         containerColor = Color.White,
         topBar = {

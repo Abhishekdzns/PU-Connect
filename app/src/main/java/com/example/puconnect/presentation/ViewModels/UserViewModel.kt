@@ -32,7 +32,7 @@ class UserViewModel @Inject constructor(
     fun getUserInfo() {
         if (userId != null) {
             viewModelScope.launch {
-                userUseCases.getUserDetails(userId).collect {
+                userUseCases.getUserDetails(userId).collect() {
                     _getUserData.value = it
                 }
             }

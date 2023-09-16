@@ -1,8 +1,10 @@
 package com.example.puconnect.di
 
 import com.example.puconnect.data.AuthenticationRepositoryImplementation
+import com.example.puconnect.data.SkillsRepositoryImpl
 import com.example.puconnect.data.UserRepositoryImpl
 import com.example.puconnect.domain.repository.AuthenticationRepository
+import com.example.puconnect.domain.repository.SkillsRepository
 import com.example.puconnect.domain.repository.UserRepository
 import com.example.puconnect.domain.use_cases.AuthenticationUseCases.AuthenticationUserCases
 import com.example.puconnect.domain.use_cases.AuthenticationUseCases.FirebaseAuthState
@@ -10,6 +12,8 @@ import com.example.puconnect.domain.use_cases.AuthenticationUseCases.FirebaseSig
 import com.example.puconnect.domain.use_cases.AuthenticationUseCases.FirebaseSignOut
 import com.example.puconnect.domain.use_cases.AuthenticationUseCases.FirebaseSignUp
 import com.example.puconnect.domain.use_cases.AuthenticationUseCases.isUserAuthenticated
+import com.example.puconnect.domain.use_cases.SkillsUseCases.GetSkills
+import com.example.puconnect.domain.use_cases.SkillsUseCases.SkillsUseCases
 import com.example.puconnect.domain.use_cases.UserUseCases.GetUserDetails
 import com.example.puconnect.domain.use_cases.UserUseCases.SetSkills
 import com.example.puconnect.domain.use_cases.UserUseCases.SetUserDetails
@@ -73,5 +77,18 @@ object PuconnectModule {
             getUserDetails = GetUserDetails(userRepository),
             setUserDetails = SetUserDetails(userRepository),
             setSkills = SetSkills(userRepository)
+        )
+
+    @Singleton
+    @Provides
+    fun provideSkillsRepository(firestore: FirebaseFirestore):SkillsRepository{
+        return SkillsRepositoryImpl(firestore)
+    }
+
+    @Singleton
+    @Provides
+    fun provideSkillsUseCases(skillsRepositoryImpl: SkillsRepositoryImpl)=
+        SkillsUseCases(
+            getSkills = GetSkills(skillsRepositoryImpl)
         )
 }

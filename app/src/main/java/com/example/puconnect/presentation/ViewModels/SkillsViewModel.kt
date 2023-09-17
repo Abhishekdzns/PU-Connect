@@ -14,18 +14,26 @@ import javax.inject.Inject
 @HiltViewModel
 class SkillsViewModel @Inject constructor(
     private val skillsUseCases: SkillsUseCases
-) :ViewModel() {
+) : ViewModel() {
 
-    private val _skills = mutableStateOf<Response<List<GenreWithSkills>?>>(Response.Success(null))
-    val skills: State<Response<List<GenreWithSkills>?>> = _skills
+    private val _skills = mutableStateOf<Response<List<GenreWithSkills>>>(Response.Loading)
+    val skills: State<Response<List<GenreWithSkills>>> = _skills
 
-    fun getSkills(){
+    fun getSkills() {
         viewModelScope.launch {
-            val data = skillsUseCases
-            data.getSkills.invoke().collect(){
-
+            skillsUseCases.getSkills().collect{
+                _skills.value = it
             }
-//            skillsUseCases.getSkills
+        }
+    }
+
+    private val _uploadSkills = mutableStateOf<Response<Boolean>>(Response.Loading)
+    val uploadSkills: State<Response<Boolean>> = _uploadSkills
+    fun setSkills(skillsList:List<GenreWithSkills>){
+        viewModelScope.launch {
+            skillsUseCases.setSkills(skillsList).collect{
+                _uploadSkills.value = it
+            }
         }
     }
 }

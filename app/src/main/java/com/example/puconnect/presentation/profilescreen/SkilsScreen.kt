@@ -1,5 +1,6 @@
 package com.example.puconnect.presentation.profilescreen
 
+import android.util.Log
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.Arrangement
@@ -17,6 +18,7 @@ import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
+import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.Divider
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
@@ -45,102 +47,149 @@ import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavHostController
 import com.example.puconnect.R
+import com.example.puconnect.domain.model.GenreWithSkills
+import com.example.puconnect.domain.model.Skill
 import com.example.puconnect.mockdata.profile.allGenres
+import com.example.puconnect.presentation.Toast
 import com.example.puconnect.presentation.ViewModels.SkillsViewModel
+import com.example.puconnect.presentation.ViewModels.UserViewModel
 import com.example.puconnect.presentation.common.VerticalSpacer
+import com.example.puconnect.presentation.navigation.Destinations
 import com.example.puconnect.ui.theme.addressColor
 import com.example.puconnect.ui.theme.gilroy
 import com.example.puconnect.ui.theme.textFieldBorder
+import com.example.puconnect.util.Response
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun SkillsScreen(
     navController: NavHostController
 ) {
+//    var mySkills by remember {
+//        mutableStateOf(emptyList<Skill>())
+//    }
+//    val userViewModel:UserViewModel = hiltViewModel()
+//    userViewModel.getUserInfo()
+//    when (val response = userViewModel.getUserData.value) {
+//        is Response.Error -> {
+//            Toast(message = "Unexpected Error")
+//        }
+//
+//        Response.Loading -> {
+//            CircularProgressIndicator()
+//        }
+//
+//        is Response.Success -> {
+//            val obj = response.data
+//            if(obj!=null){
+//                mySkills = mySkills + obj.skills
+//
+//            }
+//        }
+//    }
+
+//    mySkills.forEach {
+//        Log.d("SKILLS_LIST", "SkillsScreen: ${it.skillName}")
+//    }
+
     val skillsViewModel:SkillsViewModel = hiltViewModel()
-    skillsViewModel
-    Scaffold (
-        containerColor = Color.White,
-        topBar = {
-            TopAppBar(
-                title = {
-                    Text(
-                        fontFamily = gilroy,
+    skillsViewModel.getSkills()
+    when (val response = skillsViewModel.skills.value) {
+        is Response.Error -> {
+            Toast(message = "Unexpected Error")
+        }
 
-                        text = "Skills",
-                        fontWeight = FontWeight.W600,
-                        fontSize = 16.sp,
-                        lineHeight = 19.6.sp,
-                        color = Color.White
+        Response.Loading -> {
+            CircularProgressIndicator()
+        }
+
+        is Response.Success -> {
+            val obj = response.data
+            Scaffold (
+                containerColor = Color.White,
+                topBar = {
+                    TopAppBar(
+                        title = {
+                            Text(
+                                fontFamily = gilroy,
+
+                                text = "Skills",
+                                fontWeight = FontWeight.W600,
+                                fontSize = 16.sp,
+                                lineHeight = 19.6.sp,
+                                color = Color.White
+                            )
+                        },
+                        navigationIcon = {
+                            IconButton(
+                                modifier = Modifier.padding(start = 2.dp),
+                                onClick = {
+                                    navController.popBackStack()
+                                }) {
+                                Icon(
+                                    imageVector = ImageVector.vectorResource(id = R.drawable.arrowleft),
+                                    contentDescription = null,
+                                    tint = Color.White
+                                )
+                            }
+                        },
+                        colors = TopAppBarDefaults.mediumTopAppBarColors(containerColor = Color.Black)
                     )
-                },
-                navigationIcon = {
-                    IconButton(
-                        modifier = Modifier.padding(start = 2.dp),
-                        onClick = {
-                             navController.popBackStack()
-                        }) {
-                        Icon(
-                            imageVector = ImageVector.vectorResource(id = R.drawable.arrowleft),
-                            contentDescription = null,
-                            tint = Color.White
-                        )
-                    }
-                },
-                colors = TopAppBarDefaults.mediumTopAppBarColors(containerColor = Color.Black)
-            )
 
-        },
-        bottomBar = {
-            Column (
-                modifier = Modifier.navigationBarsPadding()
-            )  {
-                VerticalSpacer(height = 16)
+                },
+                bottomBar = {
+                    Column (
+                        modifier = Modifier.navigationBarsPadding()
+                    )  {
+                        VerticalSpacer(height = 16)
 
-                Button(
-                    shape = RoundedCornerShape(4.dp),
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .height(56.dp)
-                        .padding(horizontal = 20.dp)
-                        .background(
+                        Button(
                             shape = RoundedCornerShape(4.dp),
-                            color = Color.Black
-                        ),
-                    onClick = {  },
-                    colors = ButtonDefaults.buttonColors(containerColor = Color.Black)
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .height(56.dp)
+                                .padding(horizontal = 20.dp)
+                                .background(
+                                    shape = RoundedCornerShape(4.dp),
+                                    color = Color.Black
+                                ),
+                            onClick = {  },
+                            colors = ButtonDefaults.buttonColors(containerColor = Color.Black)
+                        ) {
+
+                            Text(
+                                fontFamily = gilroy,
+
+                                text = "Save",
+                                fontWeight = FontWeight.W600,
+                                fontSize = 14.sp,
+                                lineHeight = 17.15.sp,
+                                color = Color.White
+                            )
+
+                        }
+
+                        VerticalSpacer(height = 16)
+                    }
+                }
+            ) {
+                Column(
+                    modifier = Modifier
+                        .fillMaxSize()
+                        .padding(it)
+                        .padding(horizontal = 20.dp)
                 ) {
 
-                    Text(
-                        fontFamily = gilroy,
 
-                        text = "Save",
-                        fontWeight = FontWeight.W600,
-                        fontSize = 14.sp,
-                        lineHeight = 17.15.sp,
-                        color = Color.White
-                    )
+                    MySkills()
+
+                    SkillSet(obj)
 
                 }
-
-                VerticalSpacer(height = 16)
             }
         }
-    ) {
-        Column(
-            modifier = Modifier
-                .fillMaxSize()
-                .padding(it)
-                .padding(horizontal = 20.dp)
-        ) {
-
-
-            MySkills()
-
-            SkillSet()
-
-        }
     }
+
 
 
 }
@@ -248,7 +297,9 @@ fun MySkills() {
 
 @OptIn(ExperimentalLayoutApi::class)
 @Composable
-fun SkillSet() {
+fun SkillSet(
+    allGenres:List<GenreWithSkills>
+) {
     LazyColumn(
         verticalArrangement = Arrangement.spacedBy(8.dp)
     ) {
@@ -257,7 +308,7 @@ fun SkillSet() {
             item {
                 Column {
                     Text(
-                        text = genreWithSkills.genre,
+                        text = genreWithSkills.genreName,
                         fontFamily = gilroy,
                         fontSize = 16.sp,
                         fontWeight = FontWeight.W600,
@@ -275,11 +326,11 @@ fun SkillSet() {
                     horizontalArrangement = Arrangement.spacedBy(8.dp),
                     verticalAlignment = Alignment.CenterVertically
                 ) {
-                    genreWithSkills.skillList.forEach {skill->
+                    genreWithSkills.skillsList.forEach {skill->
                         Column () {
                             VerticalSpacer(height = 8)
 
-                            SkillChip(skill = skill)
+                            SkillChip(skill = skill.skillName,Color.Black)
 
                             VerticalSpacer(height = 8)
                         }
@@ -304,11 +355,11 @@ fun SkillSet() {
 }
 
 @Composable
-fun SkillChip(skill: String) {
+fun SkillChip(skill: String,chipColor: Color) {
     Box (
         modifier = Modifier
             .height(32.dp)
-            .border(shape = RoundedCornerShape(20.dp), color = Color.Black, width = (0.25).dp)
+            .border(shape = RoundedCornerShape(20.dp), color = chipColor, width = (0.25).dp)
             .background(shape = RoundedCornerShape(20.dp), color = Color.White),
         contentAlignment = Alignment.Center
     ) {

@@ -8,4 +8,6 @@ interface SkillsRepository {
 
     fun getSkills(): Flow<Response<List<GenreWithSkills>>>
 
+    fun setSkills(skillsList:List<GenreWithSkills>):Flow<Response<Boolean>>
+
 }

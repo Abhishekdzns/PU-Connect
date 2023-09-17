@@ -89,6 +89,7 @@ object PuconnectModule {
     @Provides
     fun provideSkillsUseCases(skillsRepositoryImpl: SkillsRepositoryImpl)=
         SkillsUseCases(
-            getSkills = GetSkills(skillsRepositoryImpl)
+            getSkills = GetSkills(skillsRepositoryImpl),
+            setSkills = com.example.puconnect.domain.use_cases.SkillsUseCases.SetSkills(skillsRepositoryImpl)
         )
 }

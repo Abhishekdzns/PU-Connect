@@ -15,6 +15,7 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.navigationBarsPadding
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.selection.selectable
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
@@ -49,12 +50,10 @@ import androidx.navigation.NavHostController
 import com.example.puconnect.R
 import com.example.puconnect.domain.model.GenreWithSkills
 import com.example.puconnect.domain.model.Skill
-import com.example.puconnect.mockdata.profile.allGenres
 import com.example.puconnect.presentation.Toast
 import com.example.puconnect.presentation.ViewModels.SkillsViewModel
 import com.example.puconnect.presentation.ViewModels.UserViewModel
 import com.example.puconnect.presentation.common.VerticalSpacer
-import com.example.puconnect.presentation.navigation.Destinations
 import com.example.puconnect.ui.theme.addressColor
 import com.example.puconnect.ui.theme.gilroy
 import com.example.puconnect.ui.theme.textFieldBorder
@@ -63,37 +62,22 @@ import com.example.puconnect.util.Response
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun SkillsScreen(
-    navController: NavHostController
+    navController: NavHostController,
 ) {
-//    var mySkills by remember {
-//        mutableStateOf(emptyList<Skill>())
-//    }
-//    val userViewModel:UserViewModel = hiltViewModel()
-//    userViewModel.getUserInfo()
-//    when (val response = userViewModel.getUserData.value) {
-//        is Response.Error -> {
-//            Toast(message = "Unexpected Error")
-//        }
-//
-//        Response.Loading -> {
-//            CircularProgressIndicator()
-//        }
-//
-//        is Response.Success -> {
-//            val obj = response.data
-//            if(obj!=null){
-//                mySkills = mySkills + obj.skills
-//
-//            }
-//        }
-//    }
-
-//    mySkills.forEach {
-//        Log.d("SKILLS_LIST", "SkillsScreen: ${it.skillName}")
-//    }
-
-    val skillsViewModel:SkillsViewModel = hiltViewModel()
+//    TODO get skills from the userProfile -- Not working currently
+    val skillsViewModel: SkillsViewModel = hiltViewModel()
     skillsViewModel.getSkills()
+
+    var mySkills by remember {
+        mutableStateOf(listOf<Skill>(
+            Skill("Flutter","0"),
+            Skill("Android","0"),
+            Skill("Web Development","0"),
+            Skill("Kotlin","0")
+        ))
+    }
+
+
     when (val response = skillsViewModel.skills.value) {
         is Response.Error -> {
             Toast(message = "Unexpected Error")
@@ -105,7 +89,7 @@ fun SkillsScreen(
 
         is Response.Success -> {
             val obj = response.data
-            Scaffold (
+            Scaffold(
                 containerColor = Color.White,
                 topBar = {
                     TopAppBar(
@@ -138,9 +122,9 @@ fun SkillsScreen(
 
                 },
                 bottomBar = {
-                    Column (
+                    Column(
                         modifier = Modifier.navigationBarsPadding()
-                    )  {
+                    ) {
                         VerticalSpacer(height = 16)
 
                         Button(
@@ -153,7 +137,7 @@ fun SkillsScreen(
                                     shape = RoundedCornerShape(4.dp),
                                     color = Color.Black
                                 ),
-                            onClick = {  },
+                            onClick = { },
                             colors = ButtonDefaults.buttonColors(containerColor = Color.Black)
                         ) {
 
@@ -172,7 +156,7 @@ fun SkillsScreen(
                         VerticalSpacer(height = 16)
                     }
                 }
-            ) {
+            ) { it ->
                 Column(
                     modifier = Modifier
                         .fillMaxSize()
@@ -183,13 +167,18 @@ fun SkillsScreen(
 
                     MySkills()
 
-                    SkillSet(obj)
+                    SkillSet(obj, mySkills, addSkill = {skill->
+                        mySkills = mySkills + Skill(skillName = skill,"0")
+                        Log.d("ONCLICK", "SkillsScreen: ${mySkills.size}")
+                    }, removeSkill = {skill->
+                        mySkills = mySkills.filterNot {myskill-> myskill.skillName == skill }.toMutableList()
+                        Log.d("ONCLICK", "SkillsScreen: ${mySkills.size}")
+                    })
 
                 }
             }
         }
     }
-
 
 
 }
@@ -298,13 +287,20 @@ fun MySkills() {
 @OptIn(ExperimentalLayoutApi::class)
 @Composable
 fun SkillSet(
-    allGenres:List<GenreWithSkills>
+    allGenres: List<GenreWithSkills>,
+    mySkills: List<Skill>,
+    addSkill:(skill:String)->Unit,
+    removeSkill:(skill:String)->Unit
 ) {
+
+    val mySkillsGenre = GenreWithSkills("My Skills", mySkills)
+    val newGenreList = listOf(mySkillsGenre) + allGenres
+
     LazyColumn(
         verticalArrangement = Arrangement.spacedBy(8.dp)
     ) {
 
-        allGenres.forEach {genreWithSkills ->
+        newGenreList.forEach { genreWithSkills ->
             item {
                 Column {
                     Text(
@@ -321,16 +317,23 @@ fun SkillSet(
             }
 
             item {
-                FlowRow (
+                FlowRow(
                     maxItemsInEachRow = 2,
                     horizontalArrangement = Arrangement.spacedBy(8.dp),
                     verticalAlignment = Alignment.CenterVertically
                 ) {
-                    genreWithSkills.skillsList.forEach {skill->
-                        Column () {
-                            VerticalSpacer(height = 8)
+                    genreWithSkills.skillsList.forEach { skill ->
+                        val isSelected = mySkills.any {
+                            it.skillName == skill.skillName
+                        }
 
-                            SkillChip(skill = skill.skillName,Color.Black)
+                        Column() {
+                            VerticalSpacer(height = 8)
+                            SkillChip(skill = skill.skillName, isSelected, addSkill = {
+                                addSkill(it)
+                            }, removeSkill = {
+                                removeSkill(it)
+                            })
 
                             VerticalSpacer(height = 8)
                         }
@@ -343,7 +346,11 @@ fun SkillSet(
                 Column {
                     VerticalSpacer(height = 16)
 
-                    Divider(modifier = Modifier.fillMaxWidth(), thickness = (0.5).dp, color = textFieldBorder)
+                    Divider(
+                        modifier = Modifier.fillMaxWidth(),
+                        thickness = (0.5).dp,
+                        color = textFieldBorder
+                    )
 
                     VerticalSpacer(height = 16)
                 }
@@ -355,12 +362,30 @@ fun SkillSet(
 }
 
 @Composable
-fun SkillChip(skill: String,chipColor: Color) {
-    Box (
+fun SkillChip(skill: String,
+              isSelected: Boolean,
+              addSkill:(skill:String)->Unit,
+              removeSkill:(skill:String)->Unit) {
+    val chipBackgroundColor = if (isSelected) Color.Black else Color.White
+    val chipTextColor = if (isSelected) Color.White else Color.Black
+    val chipBorderColor = if (isSelected) Color.White else Color.Black
+    Box(
         modifier = Modifier
+            .selectable(
+                selected = isSelected,
+                onClick = {
+                    if (isSelected) {
+                        Log.d("ONCLICK", "SkillChip: Unselected $skill")
+                        removeSkill(skill)
+                    } else {
+                        Log.d("ONCLICK", "SkillChip: SELECTED $skill")
+                        addSkill(skill)
+                    }
+                }
+            )
             .height(32.dp)
-            .border(shape = RoundedCornerShape(20.dp), color = chipColor, width = (0.25).dp)
-            .background(shape = RoundedCornerShape(20.dp), color = Color.White),
+            .border(shape = RoundedCornerShape(20.dp), color = chipBorderColor, width = (0.25).dp)
+            .background(shape = RoundedCornerShape(20.dp), color = chipBackgroundColor),
         contentAlignment = Alignment.Center
     ) {
         Text(
@@ -370,7 +395,7 @@ fun SkillChip(skill: String,chipColor: Color) {
             fontSize = 12.sp,
             fontWeight = FontWeight.W500,
             lineHeight = 14.56.sp,
-            color = Color.Black
+            color = chipTextColor
         )
     }
 }

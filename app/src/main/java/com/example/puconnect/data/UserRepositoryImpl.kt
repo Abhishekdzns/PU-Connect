@@ -1,5 +1,6 @@
 package com.example.puconnect.data
 
+import android.util.Log
 import com.example.puconnect.domain.model.Skill
 import com.example.puconnect.domain.model.User
 import com.example.puconnect.domain.repository.UserRepository
@@ -35,6 +36,26 @@ class UserRepositoryImpl @Inject constructor(
         }
     }
 
+    override fun getUserDetailsOnce(userId: String): Flow<Response<User>> = flow {
+        emit(Response.Loading)
+        try {
+            val snapshot = firebaseFirestore.collection(Constants.COLLECTION_NAME_USERS)
+                .document(userId)
+                .get()
+                .await()
+            val data = snapshot.toObject(User::class.java)
+            if (data != null) {
+                emit(Response.Success(data))
+            } else {
+                emit(Response.Error("Unexpected Error"))
+            }
+        } catch (e: Exception) {
+            Log.d("ERRORINAWIT", "getUserDetailsOnce: ${e.message} ${e.cause}")
+            e.printStackTrace()
+            emit(Response.Error("Unexpected Error"))
+        }
+    }
+
     override fun setUserDetails(
         userId: String,
         name: String,
@@ -62,25 +83,26 @@ class UserRepositoryImpl @Inject constructor(
         }
     }
 
-    override fun setSkills(userId: String,skillsList: List<Skill>): Flow<Response<Boolean>> = flow {
-        operationSuccessful = false
-        try {
-            val userObj = mutableMapOf<String, List<Skill>>()
-            userObj["skills"]=skillsList
-            firebaseFirestore.collection(Constants.COLLECTION_NAME_USERS).document(userId)
-                .update(userObj as Map<String, Any>)
-                .addOnSuccessListener {
-                    operationSuccessful = true
-                }.await()
-            if (operationSuccessful) {
-                emit(Response.Success(operationSuccessful))
-            } else {
-                emit(Response.Error("Not Updated"))
+    override fun setSkills(userId: String, skillsList: List<Skill>): Flow<Response<Boolean>> =
+        flow {
+            operationSuccessful = false
+            try {
+                val userObj = mutableMapOf<String, List<Skill>>()
+                userObj["skills"] = skillsList
+                firebaseFirestore.collection(Constants.COLLECTION_NAME_USERS).document(userId)
+                    .update(userObj as Map<String, Any>)
+                    .addOnSuccessListener {
+                        operationSuccessful = true
+                    }.await()
+                if (operationSuccessful) {
+                    emit(Response.Success(operationSuccessful))
+                } else {
+                    emit(Response.Error("Not Updated"))
+                }
+            } catch (e: Exception) {
+                Response.Error(e.localizedMessage ?: "An Unexpected Error")
             }
-        } catch (e: Exception) {
-            Response.Error(e.localizedMessage ?: "An Unexpected Error")
         }
-    }
 
 
 }

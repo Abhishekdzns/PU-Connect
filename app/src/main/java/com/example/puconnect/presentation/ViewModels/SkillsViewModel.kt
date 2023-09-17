@@ -5,6 +5,7 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.puconnect.domain.model.GenreWithSkills
+import com.example.puconnect.domain.model.Skill
 import com.example.puconnect.domain.use_cases.SkillsUseCases.SkillsUseCases
 import com.example.puconnect.util.Response
 import dagger.hilt.android.lifecycle.HiltViewModel

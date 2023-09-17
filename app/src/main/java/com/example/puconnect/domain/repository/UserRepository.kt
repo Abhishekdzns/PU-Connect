@@ -7,6 +7,7 @@ import kotlinx.coroutines.flow.Flow
 
 interface UserRepository {
     fun getUserDetails(userId: String): Flow<Response<User>>
+    fun getUserDetailsOnce(userId: String): Flow<Response<User>>
 
     fun setUserDetails(userId: String,
                        name: String,

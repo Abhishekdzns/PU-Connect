@@ -15,6 +15,7 @@ import com.example.puconnect.domain.use_cases.AuthenticationUseCases.isUserAuthe
 import com.example.puconnect.domain.use_cases.SkillsUseCases.GetSkills
 import com.example.puconnect.domain.use_cases.SkillsUseCases.SkillsUseCases
 import com.example.puconnect.domain.use_cases.UserUseCases.GetUserDetails
+import com.example.puconnect.domain.use_cases.UserUseCases.GetUserDetailsOnce
 import com.example.puconnect.domain.use_cases.UserUseCases.SetSkills
 import com.example.puconnect.domain.use_cases.UserUseCases.SetUserDetails
 import com.example.puconnect.domain.use_cases.UserUseCases.UserUseCases
@@ -33,63 +34,71 @@ object PuconnectModule {
 
     @Singleton
     @Provides
-    fun provideFirebaseAuthentication():FirebaseAuth{
+    fun provideFirebaseAuthentication(): FirebaseAuth {
         return FirebaseAuth.getInstance()
     }
+
     @Singleton
     @Provides
-    fun provideFirebaseFirestore():FirebaseFirestore{
+    fun provideFirebaseFirestore(): FirebaseFirestore {
         return FirebaseFirestore.getInstance()
     }
 
     @Singleton
     @Provides
-    fun provideFirebaseStorage():FirebaseStorage{
+    fun provideFirebaseStorage(): FirebaseStorage {
         return FirebaseStorage.getInstance()
     }
 
     @Singleton
     @Provides
-    fun provideAuthenticationRepository(auth: FirebaseAuth,firestore: FirebaseFirestore):AuthenticationRepository{
-        return AuthenticationRepositoryImplementation(auth,firestore)
+    fun provideAuthenticationRepository(
+        auth: FirebaseAuth,
+        firestore: FirebaseFirestore
+    ): AuthenticationRepository {
+        return AuthenticationRepositoryImplementation(auth, firestore)
     }
 
     @Singleton
     @Provides
-    fun provideAuthUseCases(repositoryImplementation: AuthenticationRepositoryImplementation)=
+    fun provideAuthUseCases(repositoryImplementation: AuthenticationRepositoryImplementation) =
         AuthenticationUserCases(
-        isUserAuthenticated = isUserAuthenticated(repositoryImplementation),
-        firebaseAuthState = FirebaseAuthState(repositoryImplementation),
-        firebaseSignIn = FirebaseSignIn(repositoryImplementation),
-        firebaseSignOut = FirebaseSignOut(repositoryImplementation),
-        firebaseSignUp = FirebaseSignUp(repositoryImplementation)
-    )
+            isUserAuthenticated = isUserAuthenticated(repositoryImplementation),
+            firebaseAuthState = FirebaseAuthState(repositoryImplementation),
+            firebaseSignIn = FirebaseSignIn(repositoryImplementation),
+            firebaseSignOut = FirebaseSignOut(repositoryImplementation),
+            firebaseSignUp = FirebaseSignUp(repositoryImplementation)
+        )
 
     @Singleton
     @Provides
-    fun provideUserRepository(firestore: FirebaseFirestore):UserRepository{
+    fun provideUserRepository(firestore: FirebaseFirestore): UserRepository {
         return UserRepositoryImpl(firestore)
     }
+
     @Singleton
     @Provides
-    fun provideUserUseCases(userRepository: UserRepository)=
+    fun provideUserUseCases(userRepository: UserRepository) =
         UserUseCases(
             getUserDetails = GetUserDetails(userRepository),
+            getUserDetailsOnce = GetUserDetailsOnce(userRepository),
             setUserDetails = SetUserDetails(userRepository),
             setSkills = SetSkills(userRepository)
         )
 
     @Singleton
     @Provides
-    fun provideSkillsRepository(firestore: FirebaseFirestore):SkillsRepository{
+    fun provideSkillsRepository(firestore: FirebaseFirestore): SkillsRepository {
         return SkillsRepositoryImpl(firestore)
     }
 
     @Singleton
     @Provides
-    fun provideSkillsUseCases(skillsRepositoryImpl: SkillsRepositoryImpl)=
+    fun provideSkillsUseCases(skillsRepositoryImpl: SkillsRepositoryImpl) =
         SkillsUseCases(
             getSkills = GetSkills(skillsRepositoryImpl),
-            setSkills = com.example.puconnect.domain.use_cases.SkillsUseCases.SetSkills(skillsRepositoryImpl)
+            setSkills = com.example.puconnect.domain.use_cases.SkillsUseCases.SetSkills(
+                skillsRepositoryImpl
+            )
         )
 }

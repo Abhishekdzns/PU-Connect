@@ -291,7 +291,7 @@ fun EditProfileScreen(
                         Column () {
                             VerticalSpacer(height = 8)
 
-                            SkillChip(skill = skill,Color.Black)
+//                            SkillChip(skill = skill,false)
 
                             VerticalSpacer(height = 8)
                         }

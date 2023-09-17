@@ -29,11 +29,24 @@ class UserViewModel @Inject constructor(
     private val _setSkills = mutableStateOf<Response<Boolean>>(Response.Success(false))
     val setSkills: State<Response<Boolean>> = _setSkills
 
+    private val _getUserDataOnce = mutableStateOf<Response<User?>>(Response.Success(null))
+    val getUserDataOnce: State<Response<User?>> = _getUserDataOnce
+
     fun getUserInfo() {
         if (userId != null) {
             viewModelScope.launch {
                 userUseCases.getUserDetails(userId).collect() {
                     _getUserData.value = it
+                }
+            }
+        }
+    }
+
+    fun getUserInfoOnce() {
+        if (userId != null) {
+            viewModelScope.launch {
+                userUseCases.getUserDetailsOnce(userId).collect() {
+                    _getUserDataOnce.value = it
                 }
             }
         }

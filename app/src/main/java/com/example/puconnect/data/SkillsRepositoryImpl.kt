@@ -2,6 +2,7 @@ package com.example.puconnect.data
 
 import android.util.Log
 import com.example.puconnect.domain.model.GenreWithSkills
+import com.example.puconnect.domain.model.Skill
 import com.example.puconnect.domain.model.User
 import com.example.puconnect.domain.repository.SkillsRepository
 import com.example.puconnect.util.Constants
@@ -21,41 +22,43 @@ class SkillsRepositoryImpl @Inject constructor(
     override fun getSkills(): Flow<Response<List<GenreWithSkills>>> = callbackFlow {
         Response.Loading
         val snapShotListener = firebaseFirestore.collection(Constants.COLLECTION_NAME_SKILLS)
-            .addSnapshotListener{snapShot,e->
-                val response = if(snapShot!=null){
+            .addSnapshotListener { snapShot, e ->
+                val response = if (snapShot != null) {
                     val skillsList = snapShot.toObjects(GenreWithSkills::class.java)
                     Response.Success<List<GenreWithSkills>>(skillsList)
-                }else{
-                    Response.Error(e?.message?:e.toString())
+                } else {
+                    Response.Error(e?.message ?: e.toString())
                 }
                 trySend(response).isSuccess
             }
-        awaitClose{
+        awaitClose {
             snapShotListener.remove()
         }
     }
 
-    override fun setSkills(skillsList: List<GenreWithSkills>): Flow<Response<Boolean>> = flow {
-        operationSuccessful = false
-        try {
-            val db = firebaseFirestore
-            val batch = db.batch()
-            for (data in skillsList){
-                val documentRef = db.collection(Constants.COLLECTION_NAME_SKILLS).document()
-                batch.set(documentRef, data)
-            }
-            batch.commit()
-                .addOnSuccessListener {
-                    Log.d("SKILL_LIST", "setSkills: Success!")
-                    operationSuccessful = true
+    override fun setSkills(skillsList: List<Skill>, userId: String): Flow<Response<Boolean>> =
+        flow {
+            operationSuccessful = false
+//        todo set the skills in the user id
+            try {
+                val db = firebaseFirestore
+                val batch = db.batch()
+                for (data in skillsList) {
+                    val documentRef = db.collection(Constants.COLLECTION_NAME_SKILLS).document()
+                    batch.set(documentRef, data)
                 }
-            if(operationSuccessful){
-                emit(Response.Success(operationSuccessful))
-            }else{
-                emit(Response.Error("Not updated"))
+                batch.commit()
+                    .addOnSuccessListener {
+                        Log.d("SKILL_LIST", "setSkills: Success!")
+                        operationSuccessful = true
+                    }
+                if (operationSuccessful) {
+                    emit(Response.Success(operationSuccessful))
+                } else {
+                    emit(Response.Error("Not updated"))
+                }
+            } catch (e: Exception) {
+                Response.Error(e.localizedMessage ?: "An Unexpected Error")
             }
-        }catch (e:Exception){
-            Response.Error(e.localizedMessage?:"An Unexpected Error")
         }
-    }
 }

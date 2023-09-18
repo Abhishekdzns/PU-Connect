@@ -31,6 +31,7 @@ import androidx.compose.material3.TextFieldDefaults
 import androidx.compose.material3.TopAppBar
 import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -52,7 +53,6 @@ import com.example.puconnect.domain.model.GenreWithSkills
 import com.example.puconnect.domain.model.Skill
 import com.example.puconnect.presentation.Toast
 import com.example.puconnect.presentation.ViewModels.SkillsViewModel
-import com.example.puconnect.presentation.ViewModels.UserViewModel
 import com.example.puconnect.presentation.common.VerticalSpacer
 import com.example.puconnect.ui.theme.addressColor
 import com.example.puconnect.ui.theme.gilroy
@@ -63,20 +63,21 @@ import com.example.puconnect.util.Response
 @Composable
 fun SkillsScreen(
     navController: NavHostController,
+    mySkillsList: List<Skill>
 ) {
-//    TODO get skills from the userProfile -- Not working currently
     val skillsViewModel: SkillsViewModel = hiltViewModel()
     skillsViewModel.getSkills()
 
     var mySkills by remember {
-        mutableStateOf(listOf<Skill>(
-            Skill("Flutter","0"),
-            Skill("Android","0"),
-            Skill("Web Development","0"),
-            Skill("Kotlin","0")
-        ))
+        mutableStateOf(
+            listOf<Skill>(
+            )
+        )
     }
 
+    LaunchedEffect(key1 = Unit) {
+        mySkills = mySkillsList
+    }
 
     when (val response = skillsViewModel.skills.value) {
         is Response.Error -> {
@@ -137,7 +138,9 @@ fun SkillsScreen(
                                     shape = RoundedCornerShape(4.dp),
                                     color = Color.Black
                                 ),
-                            onClick = { },
+                            onClick = {
+//                                      TODO update skills in the user's profile
+                            },
                             colors = ButtonDefaults.buttonColors(containerColor = Color.Black)
                         ) {
 
@@ -167,12 +170,11 @@ fun SkillsScreen(
 
                     MySkills()
 
-                    SkillSet(obj, mySkills, addSkill = {skill->
-                        mySkills = mySkills + Skill(skillName = skill,"0")
-                        Log.d("ONCLICK", "SkillsScreen: ${mySkills.size}")
-                    }, removeSkill = {skill->
-                        mySkills = mySkills.filterNot {myskill-> myskill.skillName == skill }.toMutableList()
-                        Log.d("ONCLICK", "SkillsScreen: ${mySkills.size}")
+                    SkillSet(obj, mySkills, addSkill = { skill ->
+                        mySkills = mySkills + Skill(skillName = skill, "0")
+                    }, removeSkill = { skill ->
+                        mySkills = mySkills.filterNot { myskill -> myskill.skillName == skill }
+                            .toMutableList()
                     })
 
                 }
@@ -289,8 +291,8 @@ fun MySkills() {
 fun SkillSet(
     allGenres: List<GenreWithSkills>,
     mySkills: List<Skill>,
-    addSkill:(skill:String)->Unit,
-    removeSkill:(skill:String)->Unit
+    addSkill: (skill: String) -> Unit,
+    removeSkill: (skill: String) -> Unit
 ) {
 
     val mySkillsGenre = GenreWithSkills("My Skills", mySkills)
@@ -362,10 +364,12 @@ fun SkillSet(
 }
 
 @Composable
-fun SkillChip(skill: String,
-              isSelected: Boolean,
-              addSkill:(skill:String)->Unit,
-              removeSkill:(skill:String)->Unit) {
+fun SkillChip(
+    skill: String,
+    isSelected: Boolean,
+    addSkill: (skill: String) -> Unit,
+    removeSkill: (skill: String) -> Unit
+) {
     val chipBackgroundColor = if (isSelected) Color.Black else Color.White
     val chipTextColor = if (isSelected) Color.White else Color.Black
     val chipBorderColor = if (isSelected) Color.White else Color.Black
@@ -375,10 +379,8 @@ fun SkillChip(skill: String,
                 selected = isSelected,
                 onClick = {
                     if (isSelected) {
-                        Log.d("ONCLICK", "SkillChip: Unselected $skill")
                         removeSkill(skill)
                     } else {
-                        Log.d("ONCLICK", "SkillChip: SELECTED $skill")
                         addSkill(skill)
                     }
                 }

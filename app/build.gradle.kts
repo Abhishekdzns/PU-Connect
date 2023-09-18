@@ -6,6 +6,7 @@ plugins {
     id("kotlin-kapt")
     id("dagger.hilt.android.plugin")
     id("com.google.gms.google-services")
+    id ("kotlin-parcelize")
 }
 
 android {
@@ -107,4 +108,6 @@ dependencies {
     implementation(libs.kotlinx.coroutines.android)
     // flow layout
     implementation (libs.accompanist.flowlayout)
+
+    implementation (libs.kotlin.android.extensions.runtime)
 }

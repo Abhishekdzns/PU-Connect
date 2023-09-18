@@ -8,12 +8,14 @@ import com.example.puconnect.domain.model.GenreWithSkills
 import com.example.puconnect.domain.model.Skill
 import com.example.puconnect.domain.use_cases.SkillsUseCases.SkillsUseCases
 import com.example.puconnect.util.Response
+import com.google.firebase.auth.FirebaseAuth
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 @HiltViewModel
 class SkillsViewModel @Inject constructor(
+    private val auth: FirebaseAuth,
     private val skillsUseCases: SkillsUseCases
 ) : ViewModel() {
 
@@ -22,7 +24,7 @@ class SkillsViewModel @Inject constructor(
 
     fun getSkills() {
         viewModelScope.launch {
-            skillsUseCases.getSkills().collect{
+            skillsUseCases.getSkills().collect {
                 _skills.value = it
             }
         }
@@ -30,9 +32,9 @@ class SkillsViewModel @Inject constructor(
 
     private val _uploadSkills = mutableStateOf<Response<Boolean>>(Response.Loading)
     val uploadSkills: State<Response<Boolean>> = _uploadSkills
-    fun setSkills(skillsList:List<GenreWithSkills>){
+    fun setSkills(skillsList: List<Skill>, userId: String) {
         viewModelScope.launch {
-            skillsUseCases.setSkills(skillsList).collect{
+            skillsUseCases.setSkills(skillsList,userId).collect {
                 _uploadSkills.value = it
             }
         }

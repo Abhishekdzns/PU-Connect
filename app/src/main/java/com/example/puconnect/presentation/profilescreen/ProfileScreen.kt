@@ -84,7 +84,10 @@ fun ProfileScreen(
                         onEditProfileClick = { navController.navigate(Destinations.EditProfileScreen.route) },
                         obj
                     )
-
+                    navController.currentBackStackEntry?.savedStateHandle?.set(
+                        key = "mySkillsList",
+                        value = obj.skills
+                    )
                     ProfileScreenSkillSection(
                         onEditClick = { navController.navigate(Destinations.EditSkillsScreen.route) },
                         onEdit2Click = { navController.navigate(Destinations.EditProfileScreen.route) },

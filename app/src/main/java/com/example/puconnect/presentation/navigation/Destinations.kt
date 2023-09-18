@@ -36,7 +36,7 @@ sealed class Destinations(val route: String) {
 
     object NewDiscussionScreen: Destinations("discussion")
 
-    object EditSkillsScreen: Destinations("editSkills")
+    object EditSkillsScreen: Destinations("editSkills/{skillSet}")
 
     object EditProfileScreen: Destinations("editProfile")
 

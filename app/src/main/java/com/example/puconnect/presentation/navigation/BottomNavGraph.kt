@@ -11,6 +11,7 @@ import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.platform.LocalContext
 import androidx.navigation.NavHostController
+import com.example.puconnect.domain.model.Skill
 import com.example.puconnect.mockdata.home.codeGuildQueList
 import com.example.puconnect.mockdata.home.designGuildQueList
 import com.example.puconnect.mockdata.home.siddhiQue
@@ -26,11 +27,8 @@ import com.example.puconnect.presentation.notificationscreen.NewMessagesScreen
 import com.example.puconnect.presentation.notificationscreen.NotificationScreen
 import com.example.puconnect.presentation.profilescreen.EditProfileScreen
 import com.example.puconnect.presentation.profilescreen.ProfileScreen
-import com.example.puconnect.presentation.profilescreen.SkillCircles
 import com.example.puconnect.presentation.profilescreen.SkillsScreen
 import com.example.puconnect.presentation.workscreen.WorkScreen
-import com.example.puconnect.presentation.workscreen.common.NewBottomSheet
-import com.example.puconnect.presentation.workscreen.common.WorkScreenWithBottomSheet
 import com.google.accompanist.navigation.animation.AnimatedNavHost
 import com.google.accompanist.navigation.animation.composable
 
@@ -41,19 +39,20 @@ fun BottomNavGraph(navController: NavHostController, padding: PaddingValues) {
     AnimatedNavHost(
         route = Graphs.MAIN,
         navController = navController,
-        startDestination = BottomBarScreen.HomeScreen.route) {
+        startDestination = BottomBarScreen.HomeScreen.route
+    ) {
 
         composable(
             route = BottomBarScreen.HomeScreen.route,
 
-        ) {
+            ) {
             HomeScreen(navController = navController, padding = padding)
         }
 
         composable(
             route = BottomBarScreen.NetworkScreen.route,
 
-        ) {
+            ) {
             NetworkScreen(padding = padding, navController = navController)
         }
 
@@ -61,11 +60,11 @@ fun BottomNavGraph(navController: NavHostController, padding: PaddingValues) {
             route = BottomBarScreen.WorkScreen.route,
 
             ) {
-           WorkScreen(paddingValues = padding, navController = navController)
+            WorkScreen(paddingValues = padding, navController = navController)
         }
         composable(
             route = BottomBarScreen.EventsScreen.route,
-            ) {
+        ) {
             EventsScreen(navController = navController, paddingValues = padding)
         }
 
@@ -79,66 +78,66 @@ fun BottomNavGraph(navController: NavHostController, padding: PaddingValues) {
         composable(
             route = Destinations.NewMessageScreen.route,
             exitTransition = {
-                slideOutHorizontally (
+                slideOutHorizontally(
                     animationSpec = tween(
                         durationMillis = 300
                     ),
-                    targetOffsetX = {1000}
+                    targetOffsetX = { 1000 }
                 ) + fadeOut(animationSpec = tween(300))
 
             },
             enterTransition = {
-                slideInHorizontally (
+                slideInHorizontally(
                     animationSpec = tween(
                         durationMillis = 300
                     ),
-                    initialOffsetX = {1000}
+                    initialOffsetX = { 1000 }
                 ) + fadeIn(animationSpec = tween(300))
             }
-            ) {
+        ) {
             NewMessagesScreen(navController = navController)
         }
 
         composable(
             route = Destinations.NotificationScreen.route,
             exitTransition = {
-                slideOutHorizontally (
+                slideOutHorizontally(
                     animationSpec = tween(
                         durationMillis = 300
                     ),
-                    targetOffsetX = {1000}
+                    targetOffsetX = { 1000 }
                 ) + fadeOut(animationSpec = tween(300))
 
             },
             enterTransition = {
-                slideInHorizontally (
+                slideInHorizontally(
                     animationSpec = tween(
                         durationMillis = 300
                     ),
-                    initialOffsetX = {1000}
+                    initialOffsetX = { 1000 }
                 ) + fadeIn(animationSpec = tween(300))
             }
-            ) {
+        ) {
             NotificationScreen(navController = navController)
         }
 
         composable(
             route = Destinations.CodingGuildScreen.route,
             exitTransition = {
-                slideOutHorizontally (
+                slideOutHorizontally(
                     animationSpec = tween(
                         durationMillis = 300
                     ),
-                    targetOffsetX = {1000}
+                    targetOffsetX = { 1000 }
                 ) + fadeOut(animationSpec = tween(300))
 
             },
             enterTransition = {
-                slideInHorizontally (
+                slideInHorizontally(
                     animationSpec = tween(
                         durationMillis = 300
                     ),
-                    initialOffsetX = {1000}
+                    initialOffsetX = { 1000 }
                 ) + fadeIn(animationSpec = tween(300))
             }
         ) {
@@ -148,20 +147,20 @@ fun BottomNavGraph(navController: NavHostController, padding: PaddingValues) {
         composable(
             route = Destinations.DesignGuildScreen.route,
             exitTransition = {
-                slideOutHorizontally (
+                slideOutHorizontally(
                     animationSpec = tween(
                         durationMillis = 300
                     ),
-                    targetOffsetX = {1000}
+                    targetOffsetX = { 1000 }
                 ) + fadeOut(animationSpec = tween(300))
 
             },
             enterTransition = {
-                slideInHorizontally (
+                slideInHorizontally(
                     animationSpec = tween(
                         durationMillis = 300
                     ),
-                    initialOffsetX = {1000}
+                    initialOffsetX = { 1000 }
                 ) + fadeIn(animationSpec = tween(300))
             }
         ) {
@@ -171,20 +170,20 @@ fun BottomNavGraph(navController: NavHostController, padding: PaddingValues) {
         composable(
             route = Destinations.ChemGuildScreen.route,
             exitTransition = {
-                slideOutHorizontally (
+                slideOutHorizontally(
                     animationSpec = tween(
                         durationMillis = 300
                     ),
-                    targetOffsetX = {1000}
+                    targetOffsetX = { 1000 }
                 ) + fadeOut(animationSpec = tween(300))
 
             },
             enterTransition = {
-                slideInHorizontally (
+                slideInHorizontally(
                     animationSpec = tween(
                         durationMillis = 300
                     ),
-                    initialOffsetX = {1000}
+                    initialOffsetX = { 1000 }
                 ) + fadeIn(animationSpec = tween(300))
             }
         ) {
@@ -194,20 +193,20 @@ fun BottomNavGraph(navController: NavHostController, padding: PaddingValues) {
         composable(
             route = Destinations.ArtGuildScreen.route,
             exitTransition = {
-                slideOutHorizontally (
+                slideOutHorizontally(
                     animationSpec = tween(
                         durationMillis = 300
                     ),
-                    targetOffsetX = {1000}
+                    targetOffsetX = { 1000 }
                 ) + fadeOut(animationSpec = tween(300))
 
             },
             enterTransition = {
-                slideInHorizontally (
+                slideInHorizontally(
                     animationSpec = tween(
                         durationMillis = 300
                     ),
-                    initialOffsetX = {1000}
+                    initialOffsetX = { 1000 }
                 ) + fadeIn(animationSpec = tween(300))
             }
         ) {
@@ -217,20 +216,20 @@ fun BottomNavGraph(navController: NavHostController, padding: PaddingValues) {
         composable(
             route = Destinations.AiGuildScreen.route,
             exitTransition = {
-                slideOutHorizontally (
+                slideOutHorizontally(
                     animationSpec = tween(
                         durationMillis = 300
                     ),
-                    targetOffsetX = {1000}
+                    targetOffsetX = { 1000 }
                 ) + fadeOut(animationSpec = tween(300))
 
             },
             enterTransition = {
-                slideInHorizontally (
+                slideInHorizontally(
                     animationSpec = tween(
                         durationMillis = 300
                     ),
-                    initialOffsetX = {1000}
+                    initialOffsetX = { 1000 }
                 ) + fadeIn(animationSpec = tween(300))
             }
         ) {
@@ -241,26 +240,30 @@ fun BottomNavGraph(navController: NavHostController, padding: PaddingValues) {
         composable(
             route = Destinations.ChatScreen.route,
             exitTransition = {
-                slideOutHorizontally (
+                slideOutHorizontally(
                     animationSpec = tween(
                         durationMillis = 300
                     ),
-                    targetOffsetX = {1000}
+                    targetOffsetX = { 1000 }
                 ) + fadeOut(animationSpec = tween(300))
 
             },
             enterTransition = {
-                slideInHorizontally (
+                slideInHorizontally(
                     animationSpec = tween(
                         durationMillis = 300
                     ),
-                    initialOffsetX = {1000}
+                    initialOffsetX = { 1000 }
                 ) + fadeIn(animationSpec = tween(300))
             }
-        ) {navBackStackEntry ->
+        ) { navBackStackEntry ->
             val questionId = navBackStackEntry.arguments?.getString("queId")
             if (questionId == null) {
-                Toast.makeText(LocalContext.current, "userId is required for navigation", Toast.LENGTH_SHORT)
+                Toast.makeText(
+                    LocalContext.current,
+                    "userId is required for navigation",
+                    Toast.LENGTH_SHORT
+                )
                     .show()
             } else {
                 val queData = userQueList.find { userQueData ->
@@ -273,102 +276,111 @@ fun BottomNavGraph(navController: NavHostController, padding: PaddingValues) {
         composable(
             route = Destinations.DirectMessageScreen.route,
             exitTransition = {
-                slideOutHorizontally (
+                slideOutHorizontally(
                     animationSpec = tween(
                         durationMillis = 300
                     ),
-                    targetOffsetX = {1000}
+                    targetOffsetX = { 1000 }
                 ) + fadeOut(animationSpec = tween(300))
 
             },
             enterTransition = {
-                slideInHorizontally (
+                slideInHorizontally(
                     animationSpec = tween(
                         durationMillis = 300
                     ),
-                    initialOffsetX = {1000}
+                    initialOffsetX = { 1000 }
                 ) + fadeIn(animationSpec = tween(300))
             }
-            ) {navBackStackEntry ->
+        ) { navBackStackEntry ->
             val userName = navBackStackEntry.arguments?.getString("name")
             val photoId = navBackStackEntry.arguments?.getString("photoId")
             if (userName == null || photoId == null) {
-                Toast.makeText(LocalContext.current, "userId is required for navigation", Toast.LENGTH_SHORT)
+                Toast.makeText(
+                    LocalContext.current,
+                    "userId is required for navigation",
+                    Toast.LENGTH_SHORT
+                )
                     .show()
             } else {
-                MessageScreen(navController = navController, userName = userName , userPhoto = photoId.toInt())
+                MessageScreen(
+                    navController = navController,
+                    userName = userName,
+                    userPhoto = photoId.toInt()
+                )
             }
 
 
         }
-        
+
         composable(
             route = Destinations.NewDiscussionScreen.route,
             exitTransition = {
-                slideOutHorizontally (
+                slideOutHorizontally(
                     animationSpec = tween(
                         durationMillis = 300
                     ),
-                    targetOffsetX = {1000}
+                    targetOffsetX = { 1000 }
                 ) + fadeOut(animationSpec = tween(300))
 
             },
             enterTransition = {
-                slideInHorizontally (
+                slideInHorizontally(
                     animationSpec = tween(
                         durationMillis = 300
                     ),
-                    initialOffsetX = {1000}
+                    initialOffsetX = { 1000 }
                 ) + fadeIn(animationSpec = tween(300))
             }
-            ) {
+        ) {
             CreateDiscussion(navController = navController)
         }
 
         composable(
             route = Destinations.EditSkillsScreen.route,
             exitTransition = {
-                slideOutHorizontally (
+                slideOutHorizontally(
                     animationSpec = tween(
                         durationMillis = 300
                     ),
-                    targetOffsetX = {1000}
+                    targetOffsetX = { 1000 }
                 ) + fadeOut(animationSpec = tween(300))
 
             },
             enterTransition = {
-                slideInHorizontally (
+                slideInHorizontally(
                     animationSpec = tween(
                         durationMillis = 300
                     ),
-                    initialOffsetX = {1000}
+                    initialOffsetX = { 1000 }
                 ) + fadeIn(animationSpec = tween(300))
             }
         ) {
-           SkillsScreen(navController = navController)
+            val mySkillsList = navController.previousBackStackEntry?.savedStateHandle?.get<List<Skill>>("mySkillsList")
+            SkillsScreen(navController = navController, mySkillsList!!)
         }
 
         composable(
             route = Destinations.EditProfileScreen.route,
             exitTransition = {
-                slideOutHorizontally (
+                slideOutHorizontally(
                     animationSpec = tween(
                         durationMillis = 300
                     ),
-                    targetOffsetX = {1000}
+                    targetOffsetX = { 1000 }
                 ) + fadeOut(animationSpec = tween(300))
 
             },
             enterTransition = {
-                slideInHorizontally (
+                slideInHorizontally(
                     animationSpec = tween(
                         durationMillis = 300
                     ),
-                    initialOffsetX = {1000}
+                    initialOffsetX = { 1000 }
                 ) + fadeIn(animationSpec = tween(300))
             }
         ) {
-           EditProfileScreen(navController = navController)
+            EditProfileScreen(navController = navController)
         }
 
 

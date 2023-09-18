@@ -357,7 +357,7 @@ fun BottomNavGraph(navController: NavHostController, padding: PaddingValues) {
             }
         ) {
             val mySkillsList = navController.previousBackStackEntry?.savedStateHandle?.get<List<Skill>>("mySkillsList")
-            SkillsScreen(navController = navController, mySkillsList!!)
+            SkillsScreen(navController = navController, mySkillsList?: listOf())
         }
 
         composable(

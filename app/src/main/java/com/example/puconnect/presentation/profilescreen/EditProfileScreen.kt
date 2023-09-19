@@ -28,6 +28,8 @@ import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
 import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -146,7 +148,7 @@ fun EditProfileScreen(
 
                 Text(
                     modifier = Modifier.align(Alignment.Start),
-                    text = "full Name",
+                    text = "Full Name",
                     fontFamily = gilroy,
                     fontSize = 14.sp,
                     fontWeight = FontWeight.W600,
@@ -156,7 +158,14 @@ fun EditProfileScreen(
 
                 VerticalSpacer(height = 8)
 
-                ProfileScreenTextField(text = profileData.fullName,)
+                val fname = remember{ mutableStateOf("") }
+
+                ProfileScreenTextField(placeholder = profileData.fullName,
+                    value = fname.value,
+                    onValueChange = {newValue->
+                        fname.value = newValue
+                    }
+                )
 
                 VerticalSpacer(height = 26)
 

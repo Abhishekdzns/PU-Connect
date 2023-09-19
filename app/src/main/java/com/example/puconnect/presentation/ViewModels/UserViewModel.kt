@@ -26,7 +26,7 @@ class UserViewModel @Inject constructor(
     private val _setUserData = mutableStateOf<Response<Boolean>>(Response.Success(false))
     val setUserData: State<Response<Boolean>> = _setUserData
 
-    private val _setSkills = mutableStateOf<Response<Boolean>>(Response.Success(false))
+    private val _setSkills = mutableStateOf<Response<Boolean>>(Response.Loading)
     val setSkills: State<Response<Boolean>> = _setSkills
 
     private val _getUserDataOnce = mutableStateOf<Response<User?>>(Response.Success(null))

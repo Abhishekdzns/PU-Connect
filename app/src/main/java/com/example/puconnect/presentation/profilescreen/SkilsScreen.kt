@@ -54,6 +54,7 @@ import com.example.puconnect.domain.model.Skill
 import com.example.puconnect.presentation.Toast
 import com.example.puconnect.presentation.ViewModels.SkillsViewModel
 import com.example.puconnect.presentation.common.VerticalSpacer
+import com.example.puconnect.presentation.navigation.Destinations
 import com.example.puconnect.ui.theme.addressColor
 import com.example.puconnect.ui.theme.gilroy
 import com.example.puconnect.ui.theme.textFieldBorder
@@ -139,7 +140,11 @@ fun SkillsScreen(
                                     color = Color.Black
                                 ),
                             onClick = {
-//                                      TODO update skills in the user's profile
+                                navController.currentBackStackEntry?.savedStateHandle?.set(
+                                    key = "mySkillsList",
+                                    value = mySkills
+                                )
+                                navController.navigate(Destinations.SkillValueScreen.route)
                             },
                             colors = ButtonDefaults.buttonColors(containerColor = Color.Black)
                         ) {

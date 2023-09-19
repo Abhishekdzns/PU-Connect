@@ -27,6 +27,7 @@ import com.example.puconnect.presentation.notificationscreen.NewMessagesScreen
 import com.example.puconnect.presentation.notificationscreen.NotificationScreen
 import com.example.puconnect.presentation.profilescreen.EditProfileScreen
 import com.example.puconnect.presentation.profilescreen.ProfileScreen
+import com.example.puconnect.presentation.profilescreen.SkillValueScreen
 import com.example.puconnect.presentation.profilescreen.SkillsScreen
 import com.example.puconnect.presentation.workscreen.WorkScreen
 import com.google.accompanist.navigation.animation.AnimatedNavHost
@@ -359,6 +360,31 @@ fun BottomNavGraph(navController: NavHostController, padding: PaddingValues) {
             val mySkillsList = navController.previousBackStackEntry?.savedStateHandle?.get<List<Skill>>("mySkillsList")
             SkillsScreen(navController = navController, mySkillsList?: listOf())
         }
+
+        composable(
+            route = Destinations.SkillValueScreen.route,
+            exitTransition = {
+                slideOutHorizontally(
+                    animationSpec = tween(
+                        durationMillis = 300
+                    ),
+                    targetOffsetX = { 1000 }
+                ) + fadeOut(animationSpec = tween(300))
+
+            },
+            enterTransition = {
+                slideInHorizontally(
+                    animationSpec = tween(
+                        durationMillis = 300
+                    ),
+                    initialOffsetX = { 1000 }
+                ) + fadeIn(animationSpec = tween(300))
+            }
+        ) {
+            val mySkillsList = navController.previousBackStackEntry?.savedStateHandle?.get<List<Skill>>("mySkillsList")
+            SkillValueScreen(navController = navController, mySkillsList?: listOf())
+        }
+
 
         composable(
             route = Destinations.EditProfileScreen.route,

@@ -4,5 +4,6 @@ data class UserUseCases(
     val getUserDetails: GetUserDetails,
     val getUserDetailsOnce: GetUserDetailsOnce,
     val setUserDetails: SetUserDetails,
-    val setSkills: SetSkills
+    val setSkills: SetSkills,
+    val updateUserData: UpdateUserData
 )

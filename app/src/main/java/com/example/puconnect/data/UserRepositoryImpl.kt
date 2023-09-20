@@ -83,6 +83,24 @@ class UserRepositoryImpl @Inject constructor(
         }
     }
 
+    override fun updateUserDetails(userId: String, user: User): Flow<Response<Boolean>> = flow {
+        operationSuccessful = false
+        try {
+            firebaseFirestore.collection(Constants.COLLECTION_NAME_USERS).document(userId)
+                .set(user)
+                .addOnSuccessListener {
+                    operationSuccessful = true
+                }.await()
+            if (operationSuccessful) {
+                emit(Response.Success(operationSuccessful))
+            } else {
+                emit(Response.Error("Not Updated"))
+            }
+        } catch (e: Exception) {
+            Response.Error(e.localizedMessage ?: "An Unexpected Error")
+        }
+    }
+
     override fun setSkills(userId: String, skillsList: List<Skill>): Flow<Response<Boolean>> =
         flow {
             operationSuccessful = false

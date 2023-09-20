@@ -93,13 +93,6 @@ fun ProfileScreen(
                         onEdit2Click = { navController.navigate(Destinations.EditProfileScreen.route) },
                         obj
                     )
-
-//                    VerticalSpacer(height = 24)
-//
-//                    AboutMeSection(
-//                        onEdit2Click = { navController.navigate(Destinations.EditProfileScreen.route) },
-//                        obj = obj
-//                    )
                 }
             }
         }

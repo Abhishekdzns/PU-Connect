@@ -26,6 +26,9 @@ class UserViewModel @Inject constructor(
     private val _setUserData = mutableStateOf<Response<Boolean>>(Response.Success(false))
     val setUserData: State<Response<Boolean>> = _setUserData
 
+    private val _updateUserData = mutableStateOf<Response<Boolean>>(Response.Loading)
+    val updateUserData: State<Response<Boolean>> = _updateUserData
+
     private val _setSkills = mutableStateOf<Response<Boolean>>(Response.Loading)
     val setSkills: State<Response<Boolean>> = _setSkills
 
@@ -61,6 +64,17 @@ class UserViewModel @Inject constructor(
             viewModelScope.launch {
                 userUseCases.setUserDetails(userId, name, userName, role).collect {
                     _setUserData.value = it
+                }
+            }
+        }
+    }
+    fun updateUserInfo(
+        user: User
+    ) {
+        if (userId != null) {
+            viewModelScope.launch {
+                userUseCases.updateUserData(userId, user).collect {
+                    _updateUserData.value = it
                 }
             }
         }

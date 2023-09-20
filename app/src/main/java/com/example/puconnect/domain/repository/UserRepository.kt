@@ -14,5 +14,7 @@ interface UserRepository {
                        userName: String,
                        role: String):Flow<Response<Boolean>>
 
+    fun updateUserDetails(userId: String, user: User):Flow<Response<Boolean>>
+
     fun setSkills(userId: String,skillsList: List<Skill>):Flow<Response<Boolean>>
 }

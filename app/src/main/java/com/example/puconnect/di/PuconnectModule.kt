@@ -18,6 +18,7 @@ import com.example.puconnect.domain.use_cases.UserUseCases.GetUserDetails
 import com.example.puconnect.domain.use_cases.UserUseCases.GetUserDetailsOnce
 import com.example.puconnect.domain.use_cases.UserUseCases.SetSkills
 import com.example.puconnect.domain.use_cases.UserUseCases.SetUserDetails
+import com.example.puconnect.domain.use_cases.UserUseCases.UpdateUserData
 import com.example.puconnect.domain.use_cases.UserUseCases.UserUseCases
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.FirebaseFirestore
@@ -83,7 +84,8 @@ object PuconnectModule {
             getUserDetails = GetUserDetails(userRepository),
             getUserDetailsOnce = GetUserDetailsOnce(userRepository),
             setUserDetails = SetUserDetails(userRepository),
-            setSkills = SetSkills(userRepository)
+            setSkills = SetSkills(userRepository),
+            updateUserData = UpdateUserData(userRepository)
         )
 
     @Singleton

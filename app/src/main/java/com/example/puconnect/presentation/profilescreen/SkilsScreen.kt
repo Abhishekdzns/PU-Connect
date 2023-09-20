@@ -291,6 +291,45 @@ fun MySkills() {
     }
 }
 
+@Composable
+fun SkillChip(
+    skill: String,
+    isSelected: Boolean,
+    addSkill: (skill: String) -> Unit,
+    removeSkill: (skill: String) -> Unit
+) {
+    val chipBackgroundColor = if (isSelected) Color.Black else Color.White
+    val chipTextColor = if (isSelected) Color.White else Color.Black
+    val chipBorderColor = if (isSelected) Color.White else Color.Black
+    Box(
+        modifier = Modifier
+            .selectable(
+                selected = isSelected,
+                onClick = {
+                    if (isSelected) {
+                        removeSkill(skill)
+                    } else {
+                        addSkill(skill)
+                    }
+                }
+            )
+            .height(32.dp)
+            .border(shape = RoundedCornerShape(20.dp), color = chipBorderColor, width = (0.25).dp)
+            .background(shape = RoundedCornerShape(20.dp), color = chipBackgroundColor),
+        contentAlignment = Alignment.Center
+    ) {
+        Text(
+            modifier = Modifier.padding(horizontal = 16.dp),
+            text = skill,
+            fontFamily = gilroy,
+            fontSize = 12.sp,
+            fontWeight = FontWeight.W500,
+            lineHeight = 14.56.sp,
+            color = chipTextColor
+        )
+    }
+}
+
 @OptIn(ExperimentalLayoutApi::class)
 @Composable
 fun SkillSet(
@@ -365,45 +404,6 @@ fun SkillSet(
 
         }
 
-    }
-}
-
-@Composable
-fun SkillChip(
-    skill: String,
-    isSelected: Boolean,
-    addSkill: (skill: String) -> Unit,
-    removeSkill: (skill: String) -> Unit
-) {
-    val chipBackgroundColor = if (isSelected) Color.Black else Color.White
-    val chipTextColor = if (isSelected) Color.White else Color.Black
-    val chipBorderColor = if (isSelected) Color.White else Color.Black
-    Box(
-        modifier = Modifier
-            .selectable(
-                selected = isSelected,
-                onClick = {
-                    if (isSelected) {
-                        removeSkill(skill)
-                    } else {
-                        addSkill(skill)
-                    }
-                }
-            )
-            .height(32.dp)
-            .border(shape = RoundedCornerShape(20.dp), color = chipBorderColor, width = (0.25).dp)
-            .background(shape = RoundedCornerShape(20.dp), color = chipBackgroundColor),
-        contentAlignment = Alignment.Center
-    ) {
-        Text(
-            modifier = Modifier.padding(horizontal = 16.dp),
-            text = skill,
-            fontFamily = gilroy,
-            fontSize = 12.sp,
-            fontWeight = FontWeight.W500,
-            lineHeight = 14.56.sp,
-            color = chipTextColor
-        )
     }
 }
 

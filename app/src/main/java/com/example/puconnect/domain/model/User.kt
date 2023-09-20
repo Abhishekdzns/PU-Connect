@@ -11,6 +11,7 @@ data class User(
     var skills: List<Skill> = emptyList(),
     var projects: List<String> = emptyList(),
     var extraUrl: String = "",
+    var portfolioLink: String = "",
     var phoneNo: String = "",
     var college: String = "",
     var city: String = "",

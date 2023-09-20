@@ -12,7 +12,6 @@ import androidx.compose.foundation.layout.navigationBarsPadding
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
-import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.ExperimentalMaterial3Api
@@ -42,8 +41,7 @@ import com.example.puconnect.domain.model.Skill
 import com.example.puconnect.mockdata.profile.profileData
 import com.example.puconnect.presentation.Toast
 import com.example.puconnect.presentation.ViewModels.UserViewModel
-import com.example.puconnect.presentation.common.NumbericTextField
-import com.example.puconnect.presentation.common.ProfileScreenTextField
+import com.example.puconnect.presentation.common.NumericTextField
 import com.example.puconnect.presentation.common.VerticalSpacer
 import com.example.puconnect.presentation.navigation.BottomBarScreen
 import com.example.puconnect.ui.theme.gilroy
@@ -200,7 +198,7 @@ fun SkillItem(skill: Skill, onPercentageChanged: (Int) -> Unit) {
 
         VerticalSpacer(height = 8)
 
-        NumbericTextField(placeholder = profileData.fullName,
+        NumericTextField(placeholder = profileData.fullName,
             value = editPercentage,
             onValueChange = { newValue ->
                 val intValue = newValue.toIntOrNull()

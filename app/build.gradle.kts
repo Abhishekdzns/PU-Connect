@@ -110,4 +110,9 @@ dependencies {
     implementation (libs.accompanist.flowlayout)
 
     implementation (libs.kotlin.android.extensions.runtime)
+
+    implementation (libs.firebase.storage)
+
+    implementation(libs.coil.compose)
+
 }

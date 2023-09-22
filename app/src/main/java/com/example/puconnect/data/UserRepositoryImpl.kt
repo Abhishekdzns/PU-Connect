@@ -1,5 +1,6 @@
 package com.example.puconnect.data
 
+import android.net.Uri
 import android.util.Log
 import com.example.puconnect.domain.model.Skill
 import com.example.puconnect.domain.model.User
@@ -7,6 +8,7 @@ import com.example.puconnect.domain.repository.UserRepository
 import com.example.puconnect.util.Constants
 import com.example.puconnect.util.Response
 import com.google.firebase.firestore.FirebaseFirestore
+import com.google.firebase.storage.FirebaseStorage
 import kotlinx.coroutines.channels.awaitClose
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.callbackFlow
@@ -15,7 +17,8 @@ import kotlinx.coroutines.tasks.await
 import javax.inject.Inject
 
 class UserRepositoryImpl @Inject constructor(
-    private val firebaseFirestore: FirebaseFirestore
+    private val firebaseFirestore: FirebaseFirestore,
+    private val firebaseStorage: FirebaseStorage
 ) : UserRepository {
     private var operationSuccessful: Boolean = false
     override fun getUserDetails(userId: String): Flow<Response<User>> = callbackFlow {
@@ -122,5 +125,37 @@ class UserRepositoryImpl @Inject constructor(
             }
         }
 
+    override fun uploadImage(userId: String, imageUri: ByteArray): Flow<Response<Boolean>> = flow {
+        operationSuccessful = false
+        val storageRef = firebaseStorage.reference
+        emit(Response.Loading)
+        try {
+            val imageRef = storageRef.child("profile_images/$userId.jpg")
+            imageRef.putBytes(imageUri).addOnSuccessListener {
+            }.await()
+            val imageUrl = imageRef.downloadUrl.await().toString()
+            val updates = HashMap<String, Any>()
+            updates["imageUrl"] = imageUrl
+            firebaseFirestore.collection(Constants.COLLECTION_NAME_USERS).document(userId)
+                .update(updates)
+                .addOnSuccessListener {
+                    operationSuccessful = true
+                }.await()
+            emit(Response.Success(operationSuccessful))
+        } catch (e: Exception) {
+            emit(Response.Error("An Unexpected Error"))
+        }
+    }
 
+    override fun getImage(userId: String): Flow<Response<String>> = flow {
+        val storageRef = firebaseStorage.reference
+        emit(Response.Loading)
+        try {
+            val imageRef = storageRef.child("profile_images/$userId.jpg")
+            val imageUri = imageRef.downloadUrl.await().toString()
+            emit(Response.Success(imageUri))
+        } catch (e: Exception) {
+            emit(Response.Error("An Unexpected Error"))
+        }
+    }
 }

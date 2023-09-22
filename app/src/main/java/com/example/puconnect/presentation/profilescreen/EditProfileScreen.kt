@@ -1,6 +1,12 @@
 package com.example.puconnect.presentation.profilescreen
 
+import android.content.Context
+import android.graphics.Bitmap
+import android.graphics.BitmapFactory
+import android.net.Uri
 import android.util.Log
+import androidx.activity.compose.rememberLauncherForActivityResult
+import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
@@ -38,6 +44,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.vectorResource
 import androidx.compose.ui.text.font.FontWeight
@@ -46,6 +53,9 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavHostController
+import coil.annotation.ExperimentalCoilApi
+import coil.compose.rememberImagePainter
+import coil.transform.CircleCropTransformation
 import com.example.puconnect.R
 import com.example.puconnect.domain.model.Skill
 import com.example.puconnect.domain.model.User
@@ -60,15 +70,45 @@ import com.example.puconnect.presentation.navigation.BottomBarScreen
 import com.example.puconnect.presentation.navigation.Destinations
 import com.example.puconnect.ui.theme.gilroy
 import com.example.puconnect.ui.theme.textFieldBorder
+import com.example.puconnect.util.Compressor
 import com.example.puconnect.util.Response
+import java.io.ByteArrayOutputStream
 
-@OptIn(ExperimentalMaterial3Api::class, ExperimentalLayoutApi::class)
+@OptIn(ExperimentalMaterial3Api::class, ExperimentalLayoutApi::class, ExperimentalCoilApi::class)
 @Composable
 fun EditProfileScreen(
     navController: NavHostController,
 ) {
-    var userViewModel: UserViewModel = hiltViewModel()
+    val userViewModel: UserViewModel = hiltViewModel()
     userViewModel.getUserInfo()
+    userViewModel.getProfileImageUrl()
+    val cont = LocalContext.current
+
+    val imageSelectorLauncher = rememberLauncherForActivityResult(
+        ActivityResultContracts.GetContent()
+    ) { uri: Uri? ->
+        if (uri != null) {
+            val compressedImage = Compressor().uriToCompressedBitmap(cont, uri)
+            userViewModel.uploadProfileImage(compressedImage)
+        }
+    }
+
+    when (val response = userViewModel.uploadImage.value) {
+        is Response.Loading -> {
+
+        }
+
+        is Response.Error -> {
+            Toast(message = "An Unexpected Error")
+        }
+
+        is Response.Success -> {
+            if (response.data) {
+                Toast(message = "Profile Image Updated")
+            }
+        }
+    }
+
 
     var userDetails by remember { mutableStateOf(User()) }
 
@@ -96,7 +136,10 @@ fun EditProfileScreen(
         }
     }
 
-    when (val response = userViewModel.getUserData.value) {
+    when (
+
+        val response = userViewModel.getUserData.value
+    ) {
         is Response.Error -> {
             Toast(message = "Unexpected Error")
         }
@@ -186,20 +229,33 @@ fun EditProfileScreen(
                                 horizontalArrangement = Arrangement.Center
                             ) {
                                 Box {
+                                    val profileImagePainter = rememberImagePainter(
+                                        data = userDetails.imageUrl,
+                                        builder = {
+                                            // You can apply transformations here if needed
+                                            transformations(CircleCropTransformation())
+                                        }
+                                    )
                                     Image(
                                         modifier = Modifier.size(108.dp),
-                                        painter = painterResource(id = R.drawable.siddhiimage),
+                                        painter = profileImagePainter,
                                         contentDescription = null
                                     )
 
-                                    Icon(
+                                    IconButton(
+                                        onClick = {
+                                            imageSelectorLauncher.launch("image/*")
+                                        },
                                         modifier = Modifier
                                             .size(32.dp)
-                                            .offset(x = 78.dp, y = 78.dp),
-                                        imageVector = ImageVector.vectorResource(id = R.drawable.editdp),
-                                        contentDescription = null,
-                                        tint = Color.Unspecified
-                                    )
+                                            .offset(x = 78.dp, y = 78.dp)
+                                    ) {
+                                        Icon(
+                                            imageVector = ImageVector.vectorResource(id = R.drawable.editdp),
+                                            contentDescription = null,
+                                            tint = Color.Unspecified
+                                        )
+                                    }
                                 }
 
                             }
@@ -801,6 +857,7 @@ fun EditProfileScreen(
 
 
 }
+
 
 @Composable
 @Preview(showBackground = true)

@@ -14,11 +14,13 @@ import com.example.puconnect.domain.use_cases.AuthenticationUseCases.FirebaseSig
 import com.example.puconnect.domain.use_cases.AuthenticationUseCases.isUserAuthenticated
 import com.example.puconnect.domain.use_cases.SkillsUseCases.GetSkills
 import com.example.puconnect.domain.use_cases.SkillsUseCases.SkillsUseCases
+import com.example.puconnect.domain.use_cases.UserUseCases.GetImage
 import com.example.puconnect.domain.use_cases.UserUseCases.GetUserDetails
 import com.example.puconnect.domain.use_cases.UserUseCases.GetUserDetailsOnce
 import com.example.puconnect.domain.use_cases.UserUseCases.SetSkills
 import com.example.puconnect.domain.use_cases.UserUseCases.SetUserDetails
 import com.example.puconnect.domain.use_cases.UserUseCases.UpdateUserData
+import com.example.puconnect.domain.use_cases.UserUseCases.UploadImage
 import com.example.puconnect.domain.use_cases.UserUseCases.UserUseCases
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.FirebaseFirestore
@@ -73,8 +75,11 @@ object PuconnectModule {
 
     @Singleton
     @Provides
-    fun provideUserRepository(firestore: FirebaseFirestore): UserRepository {
-        return UserRepositoryImpl(firestore)
+    fun provideUserRepository(
+        firestore: FirebaseFirestore,
+        firebaseStorage: FirebaseStorage
+    ): UserRepository {
+        return UserRepositoryImpl(firestore, firebaseStorage)
     }
 
     @Singleton
@@ -85,7 +90,9 @@ object PuconnectModule {
             getUserDetailsOnce = GetUserDetailsOnce(userRepository),
             setUserDetails = SetUserDetails(userRepository),
             setSkills = SetSkills(userRepository),
-            updateUserData = UpdateUserData(userRepository)
+            updateUserData = UpdateUserData(userRepository),
+            uploadImage = UploadImage(userRepository),
+            getImage = GetImage(userRepository)
         )
 
     @Singleton

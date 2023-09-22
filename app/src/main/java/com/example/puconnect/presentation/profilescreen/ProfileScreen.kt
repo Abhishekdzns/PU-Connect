@@ -35,6 +35,9 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavHostController
+import coil.annotation.ExperimentalCoilApi
+import coil.compose.rememberImagePainter
+import coil.transform.CircleCropTransformation
 import com.example.puconnect.R
 import com.example.puconnect.domain.model.User
 import com.example.puconnect.presentation.Toast
@@ -101,6 +104,7 @@ fun ProfileScreen(
 }
 
 
+@OptIn(ExperimentalCoilApi::class)
 @Composable
 fun ProfileSection(
     onEditProfileClick: () -> Unit,
@@ -162,10 +166,16 @@ fun ProfileSection(
             Row(
                 verticalAlignment = Alignment.CenterVertically
             ) {
-
+                val profileImagePainter = rememberImagePainter(
+                    data = obj.imageUrl,
+                    builder = {
+                        // You can apply transformations here if needed
+                        transformations(CircleCropTransformation())
+                    }
+                )
                 Image(
                     modifier = Modifier.size(108.dp),
-                    painter = painterResource(id = R.drawable.siddhiimage),
+                    painter = profileImagePainter,
                     contentDescription = null
                 )
 

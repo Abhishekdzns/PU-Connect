@@ -45,87 +45,87 @@ import com.google.accompanist.navigation.animation.rememberAnimatedNavController
 fun HomeScreen(
     navController: NavHostController,
     padding: PaddingValues
-   // bottomNavigationBar: @Composable () -> Unit,
+    // bottomNavigationBar: @Composable () -> Unit,
 ) {
 
-    
+
     val screenHeight = LocalConfiguration.current.screenHeightDp
 
 
 
 
-        Box(
+    Box(
+        modifier = Modifier
+            .fillMaxHeight()
+            .fillMaxWidth()
+    ) {
+
+
+        Column(
             modifier = Modifier
+                .padding(padding)
                 .fillMaxHeight()
                 .fillMaxWidth()
+                .align(Alignment.TopCenter)
+
         ) {
+            Spacer(modifier = Modifier.height((screenHeight * 0.015f).dp))
 
+            SearchBar(navController = navController)
 
-            Column(
-                modifier = Modifier
-                    .padding(padding)
-                    .fillMaxHeight()
-                    .fillMaxWidth()
-                    .align(Alignment.TopCenter)
+            Spacer(modifier = Modifier.height((screenHeight * 0.015f).dp))
 
-            ) {
-                Spacer(modifier = Modifier.height((screenHeight * 0.015f).dp))
-
-                SearchBar(navController = navController)
-
-                Spacer(modifier = Modifier.height((screenHeight * 0.015f).dp))
-
-                Text(
-                    modifier = Modifier.padding(horizontal = 20.dp),
-                    text = "Guilds",
-                    fontFamily = gilroy,
-                    fontWeight = FontWeight.W600,
-                    fontSize = 14.sp,
-                    lineHeight = 17.15.sp,
-                    color = Color.Black
-                )
-
-                Spacer(modifier = Modifier.height((screenHeight * 0.02f).dp))
-
-                GuildScrollableRow(navController = navController)
-
-                Spacer(modifier = Modifier.height((screenHeight * 0.04f).dp))
-
-                Text(
-                    modifier = Modifier.padding(horizontal = 20.dp),
-                    text = "Chats",
-                    fontFamily = gilroy,
-                    fontWeight = FontWeight.W600,
-                    fontSize = 14.sp,
-                    lineHeight = 17.15.sp,
-                    color = Color.Black
-                )
-
-                Spacer(modifier = Modifier.height((screenHeight * 0.02f).dp))
-
-                LazyColumn(
-                    modifier = Modifier
-                        .fillMaxWidth(),
-                    // .height((screenHeight*0.6f).dp),
-                    verticalArrangement = Arrangement.spacedBy(24.dp)
-                ) {
-                    items(userQueList) { item ->
-                        UserChatItem(userQueData = item, navController)
-                    }
-                }
-            }
-
-            FloatingActionButton(
-                modifier = Modifier
-                    .align(Alignment.BottomEnd)
-                    .offset(y = -( screenHeight*0.135f).dp, x = -(20).dp),
-                onClick = {
-                    navController.navigate(Destinations.NewDiscussionScreen.route)
-                }
+            Text(
+                modifier = Modifier.padding(horizontal = 20.dp),
+                text = "Guilds",
+                fontFamily = gilroy,
+                fontWeight = FontWeight.W600,
+                fontSize = 14.sp,
+                lineHeight = 17.15.sp,
+                color = Color.Black
             )
 
+            Spacer(modifier = Modifier.height((screenHeight * 0.02f).dp))
 
+            GuildScrollableRow(navController = navController)
+
+            Spacer(modifier = Modifier.height((screenHeight * 0.04f).dp))
+
+            Text(
+                modifier = Modifier.padding(horizontal = 20.dp),
+                text = "Chats",
+                fontFamily = gilroy,
+                fontWeight = FontWeight.W600,
+                fontSize = 14.sp,
+                lineHeight = 17.15.sp,
+                color = Color.Black
+            )
+
+            Spacer(modifier = Modifier.height((screenHeight * 0.02f).dp))
+
+            LazyColumn(
+                modifier = Modifier
+                    .fillMaxWidth(),
+                // .height((screenHeight*0.6f).dp),
+                verticalArrangement = Arrangement.spacedBy(24.dp)
+            ) {
+                items(userQueList) { item ->
+                    UserChatItem(userQueData = item, navController)
+                }
+            }
         }
+
+        FloatingActionButton(
+            modifier = Modifier
+                .align(Alignment.BottomEnd)
+                .offset(y = -(screenHeight * 0.135f).dp, x = -(20).dp),
+            onClick = {
+                navController.navigate(Destinations.NewDiscussionScreen.route)
+            }
+        )
+
+
+    }
 
 
 }

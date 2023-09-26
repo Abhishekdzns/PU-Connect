@@ -1,9 +1,11 @@
 package com.example.puconnect.di
 
 import com.example.puconnect.data.AuthenticationRepositoryImplementation
+import com.example.puconnect.data.PostRepositoryImpl
 import com.example.puconnect.data.SkillsRepositoryImpl
 import com.example.puconnect.data.UserRepositoryImpl
 import com.example.puconnect.domain.repository.AuthenticationRepository
+import com.example.puconnect.domain.repository.PostRepository
 import com.example.puconnect.domain.repository.SkillsRepository
 import com.example.puconnect.domain.repository.UserRepository
 import com.example.puconnect.domain.use_cases.AuthenticationUseCases.AuthenticationUserCases
@@ -12,6 +14,9 @@ import com.example.puconnect.domain.use_cases.AuthenticationUseCases.FirebaseSig
 import com.example.puconnect.domain.use_cases.AuthenticationUseCases.FirebaseSignOut
 import com.example.puconnect.domain.use_cases.AuthenticationUseCases.FirebaseSignUp
 import com.example.puconnect.domain.use_cases.AuthenticationUseCases.isUserAuthenticated
+import com.example.puconnect.domain.use_cases.PostUseCases.GetPosts
+import com.example.puconnect.domain.use_cases.PostUseCases.PostUseCases
+import com.example.puconnect.domain.use_cases.PostUseCases.UploadPost
 import com.example.puconnect.domain.use_cases.SkillsUseCases.GetSkills
 import com.example.puconnect.domain.use_cases.SkillsUseCases.SkillsUseCases
 import com.example.puconnect.domain.use_cases.UserUseCases.GetImage
@@ -109,5 +114,20 @@ object PuconnectModule {
             setSkills = com.example.puconnect.domain.use_cases.SkillsUseCases.SetSkills(
                 skillsRepositoryImpl
             )
+        )
+
+    @Singleton
+    @Provides
+    fun providePostRepository(firestore: FirebaseFirestore): PostRepository {
+        return PostRepositoryImpl(firestore)
+    }
+
+    @Singleton
+    @Provides
+    fun providePostUseCases(postRepositoryImpl: PostRepositoryImpl) =
+        PostUseCases(
+            getPosts = GetPosts(repository = postRepositoryImpl),
+            uploadPost = UploadPost(repository = postRepositoryImpl)
+
         )
 }

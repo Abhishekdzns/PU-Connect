@@ -8,7 +8,6 @@ import androidx.compose.foundation.gestures.Orientation
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.offset
@@ -24,6 +23,7 @@ import androidx.compose.material.swipeable
 import androidx.compose.material3.Icon
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
@@ -49,7 +49,7 @@ import kotlin.math.roundToInt
 
 @OptIn(ExperimentalMaterialApi::class)
 @Composable
-fun SwipeableSample2() {
+fun SwipeableSample2(onCompletion: () -> Unit) {
     val screenWidth = LocalConfiguration.current.screenWidthDp
     val width = screenWidth.dp
 
@@ -59,7 +59,7 @@ fun SwipeableSample2() {
         mutableStateOf(swipeableState.progress.fraction)
     }
 
-    Log.d("AN","${isCompleted.value}")
+    Log.d("AN", "${isCompleted.value}")
     val sizePx = with(LocalDensity.current) { width.toPx() }
     val anchors = mapOf(0f to 0, sizePx to 1) // Maps anchor points (in px) to states
 
@@ -74,7 +74,8 @@ fun SwipeableSample2() {
         orientation = Orientation.Horizontal
     )
 
-    val modifier = if (isCompleted.value < 0.99f || isCompleted.value == 1.0f) customModifier else Modifier
+    val modifier =
+        if (isCompleted.value < 0.99f || isCompleted.value == 1.0f) customModifier else Modifier
 
     Box(
         modifier = modifier
@@ -82,13 +83,13 @@ fun SwipeableSample2() {
             .height(56.dp)
 
             .apply {
-            Modifier.swipeable(
-                        state = swipeableState,
-                        anchors = anchors,
-                        thresholds = { _, _ -> FractionalThreshold(0.7f) },
-                        orientation = Orientation.Horizontal
-                    )
-                 }
+                Modifier.swipeable(
+                    state = swipeableState,
+                    anchors = anchors,
+                    thresholds = { _, _ -> FractionalThreshold(0.7f) },
+                    orientation = Orientation.Horizontal
+                )
+            }
 
             .background(Color.White)
             .let { if (swipeableState.offset.value >= sizePx) it else it.clickable { } }
@@ -143,7 +144,7 @@ fun SwipeableSample2() {
         // Show "Swipe Completed" when swipe is completed
         if (swipeableState.offset.value >= sizePx) {
             Text(
-                text = "Post Successful",
+                text = "Posting",
                 modifier = Modifier
                     .align(Alignment.Center)
                     .padding(16.dp)
@@ -157,16 +158,19 @@ fun SwipeableSample2() {
                 fontSize = 14.sp,
                 lineHeight = 16.8.sp,
             )
+            LaunchedEffect(key1 = Unit) {
+                onCompletion()
+            }
         }
     }
 }
 
 
 @Composable
-fun SwipeButton() {
-    Row (
+fun SwipeButton(onCompletion: () -> Unit) {
+    Row(
         modifier = Modifier
-            .padding(start = 20.dp , end = 20.dp , bottom = 20.dp)
+            .padding(start = 20.dp, end = 20.dp, bottom = 20.dp)
             .fillMaxWidth()
             .height(56.dp)
             .border(
@@ -178,7 +182,7 @@ fun SwipeButton() {
 
     ) {
 
-    SwipeableSample2()
+        SwipeableSample2(onCompletion)
 
     }
 }
@@ -186,6 +190,6 @@ fun SwipeButton() {
 @Preview(showSystemUi = true, showBackground = true)
 @Composable
 fun PReview() {
-    SwipeButton()
+//    SwipeButton()
 }
 

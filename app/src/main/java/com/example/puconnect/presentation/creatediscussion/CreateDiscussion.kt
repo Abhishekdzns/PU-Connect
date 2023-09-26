@@ -29,6 +29,7 @@ import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
 import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -44,28 +45,62 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.rememberNavController
 import com.example.puconnect.R
+import com.example.puconnect.domain.model.Chat
+import com.example.puconnect.domain.model.Post
+import com.example.puconnect.domain.model.User
 import com.example.puconnect.mockdata.home.guildList
+import com.example.puconnect.presentation.Toast
+import com.example.puconnect.presentation.ViewModels.PostViewModel
 import com.example.puconnect.presentation.common.BottomOutlineTextField
 import com.example.puconnect.presentation.common.BottomOutlineTextField2
 import com.example.puconnect.presentation.common.SwipeButton
 import com.example.puconnect.presentation.homescreen.components.HorizontalSpacer
+import com.example.puconnect.presentation.navigation.BottomBarScreen
 import com.example.puconnect.ui.theme.gilroy
 import com.example.puconnect.ui.theme.textFieldBorder
+import com.example.puconnect.util.Response
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun CreateDiscussion(
     navController: NavHostController
 ) {
+    val postViewModel: PostViewModel = hiltViewModel()
 
-    var topic by remember {
+    when (val response = postViewModel.uploadPost.value) {
+        is Response.Loading -> {
+
+        }
+
+        is Response.Error -> {
+            Toast(message = "An Unexpected Error")
+        }
+
+        is Response.Success -> {
+            val isUploaded = response.data
+            if (isUploaded) {
+                Toast(message = "Profile Updated")
+                navController.navigate(BottomBarScreen.HomeScreen.route) {
+                    popUpTo(BottomBarScreen.HomeScreen.route) {
+                        inclusive = true
+                    }
+                }
+            } else {
+                Toast(message = "Error")
+            }
+        }
+    }
+
+
+    var postTitle by remember {
         mutableStateOf("")
     }
 
-    var subtitle by remember {
+    var postDesc by remember {
         mutableStateOf("")
     }
 
@@ -82,7 +117,7 @@ fun CreateDiscussion(
         isExapanded = false
     }
 
-    Column (
+    Column(
         modifier = Modifier
             .fillMaxSize()
             .padding(bottom = 50.dp),
@@ -183,8 +218,7 @@ fun CreateDiscussion(
                                 )
                                 .width(140.dp)
                                 .padding(horizontal = 10.dp)
-                                .clip(RoundedCornerShape(10.dp))
-                            ,
+                                .clip(RoundedCornerShape(10.dp)),
                             expanded = isExapanded,
                             onDismissRequest = { isExapanded = false }
                         ) {
@@ -207,15 +241,15 @@ fun CreateDiscussion(
 
                 BottomOutlineTextField(
                     placeholder = "What do you want to discuss about?",
-                    value = topic,
-                    onValueChange = { topic = it })
+                    value = postTitle,
+                    onValueChange = { postTitle = it })
 
                 Spacer(modifier = Modifier.height(16.dp))
 
                 Text(
                     fontFamily = gilroy,
 
-                    text = "${topic.length}/150",
+                    text = "${postTitle.length}/150",
                     fontWeight = FontWeight.W600,
                     fontSize = 12.sp,
                     lineHeight = 14.7.sp,
@@ -225,9 +259,9 @@ fun CreateDiscussion(
                 Spacer(modifier = Modifier.height(40.dp))
 
                 BottomOutlineTextField2(
-                    placeholder = "Your discussion subtitle (optional)",
-                    value = subtitle,
-                    onValueChange = { subtitle = it }
+                    placeholder = "Your discussion postDesc (optional)",
+                    value = postDesc,
+                    onValueChange = { postDesc = it }
                 )
 
                 Spacer(modifier = Modifier.height(16.dp))
@@ -235,7 +269,7 @@ fun CreateDiscussion(
                 Text(
                     fontFamily = gilroy,
 
-                    text = "${subtitle.length}/500",
+                    text = "${postDesc.length}/500",
                     fontWeight = FontWeight.W600,
                     fontSize = 12.sp,
                     lineHeight = 14.7.sp,
@@ -246,10 +280,22 @@ fun CreateDiscussion(
 
         }
 
-        SwipeButton()
+        SwipeButton(onCompletion = {
+            postViewModel.uploadPost(
+                Post(
+                    postTitle = postTitle,
+                    postDesc = postDesc,
+                    postType = selectedGuild,
+                    postUser = User(),
+                    engageCount = 0,
+                    engageList = listOf()
+                )
+            )
+
+
+        })
     }
 }
-
 
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -273,7 +319,8 @@ fun DropDownChip(
                 fontWeight = FontWeight.W500,
                 fontSize = 12.sp,
                 lineHeight = 14.56.sp
-            ) },
+            )
+        },
         border = AssistChipDefaults.assistChipBorder(
             borderColor = textFieldBorder,
             borderWidth = (0.5).dp
@@ -283,7 +330,8 @@ fun DropDownChip(
                 modifier = Modifier.size(12.dp),
                 imageVector = ImageVector
                     .vectorResource(id = if (isExpanded) R.drawable.caretup else R.drawable.vector),
-                contentDescription = null)
+                contentDescription = null
+            )
         }
     )
 }
@@ -297,7 +345,7 @@ fun GuildItemChip2(
     modifier: Modifier = Modifier
 ) {
 
-    Column (){
+    Column() {
         Spacer(modifier = Modifier.height(5.dp))
 
         AssistChip(
@@ -314,7 +362,8 @@ fun GuildItemChip2(
                     fontWeight = FontWeight.W500,
                     fontSize = 12.sp,
                     lineHeight = 9.7.sp
-                ) },
+                )
+            },
             border = AssistChipDefaults.assistChipBorder(
                 borderColor = textFieldBorder,
                 borderWidth = (0.25).dp

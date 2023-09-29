@@ -1,6 +1,11 @@
 package com.example.puconnect.domain.model
 
+import android.os.Parcelable
+import kotlinx.parcelize.Parcelize
+
+@Parcelize
 data class Chat(
-    val userName:String="",
-    val postDesc:String=""
-)
+    var chatId: String = "",
+    var userName: String = "",
+    var postDesc: String = ""
+) : Parcelable

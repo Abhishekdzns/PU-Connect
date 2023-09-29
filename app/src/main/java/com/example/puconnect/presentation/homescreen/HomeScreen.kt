@@ -15,6 +15,7 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
+import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
@@ -28,9 +29,12 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavHostController
 import com.example.puconnect.mockdata.home.UserQueData
 import com.example.puconnect.mockdata.home.userQueList
+import com.example.puconnect.presentation.Toast
+import com.example.puconnect.presentation.ViewModels.PostViewModel
 import com.example.puconnect.presentation.homescreen.components.BottomNavigationBar
 import com.example.puconnect.presentation.homescreen.components.FloatingActionButton
 import com.example.puconnect.presentation.homescreen.components.GuildScrollableRow
@@ -38,6 +42,7 @@ import com.example.puconnect.presentation.homescreen.components.SearchBar
 import com.example.puconnect.presentation.homescreen.components.UserChatItem
 import com.example.puconnect.presentation.navigation.Destinations
 import com.example.puconnect.ui.theme.gilroy
+import com.example.puconnect.util.Response
 import com.google.accompanist.navigation.animation.rememberAnimatedNavController
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -51,80 +56,89 @@ fun HomeScreen(
 
     val screenHeight = LocalConfiguration.current.screenHeightDp
 
-
-
-
-    Box(
-        modifier = Modifier
-            .fillMaxHeight()
-            .fillMaxWidth()
-    ) {
-
-
-        Column(
-            modifier = Modifier
-                .padding(padding)
-                .fillMaxHeight()
-                .fillMaxWidth()
-                .align(Alignment.TopCenter)
-
-        ) {
-            Spacer(modifier = Modifier.height((screenHeight * 0.015f).dp))
-
-            SearchBar(navController = navController)
-
-            Spacer(modifier = Modifier.height((screenHeight * 0.015f).dp))
-
-            Text(
-                modifier = Modifier.padding(horizontal = 20.dp),
-                text = "Guilds",
-                fontFamily = gilroy,
-                fontWeight = FontWeight.W600,
-                fontSize = 14.sp,
-                lineHeight = 17.15.sp,
-                color = Color.Black
-            )
-
-            Spacer(modifier = Modifier.height((screenHeight * 0.02f).dp))
-
-            GuildScrollableRow(navController = navController)
-
-            Spacer(modifier = Modifier.height((screenHeight * 0.04f).dp))
-
-            Text(
-                modifier = Modifier.padding(horizontal = 20.dp),
-                text = "Chats",
-                fontFamily = gilroy,
-                fontWeight = FontWeight.W600,
-                fontSize = 14.sp,
-                lineHeight = 17.15.sp,
-                color = Color.Black
-            )
-
-            Spacer(modifier = Modifier.height((screenHeight * 0.02f).dp))
-
-            LazyColumn(
-                modifier = Modifier
-                    .fillMaxWidth(),
-                // .height((screenHeight*0.6f).dp),
-                verticalArrangement = Arrangement.spacedBy(24.dp)
-            ) {
-                items(userQueList) { item ->
-                    UserChatItem(userQueData = item, navController)
-                }
-            }
+    val postViewModel: PostViewModel = hiltViewModel()
+    postViewModel.getPosts()
+    when (val response = postViewModel.posts.value) {
+        is Response.Error -> {
+            Toast(message = "Unexpected Error")
         }
 
-        FloatingActionButton(
-            modifier = Modifier
-                .align(Alignment.BottomEnd)
-                .offset(y = -(screenHeight * 0.135f).dp, x = -(20).dp),
-            onClick = {
-                navController.navigate(Destinations.NewDiscussionScreen.route)
+        Response.Loading -> {
+            CircularProgressIndicator()
+        }
+
+        is Response.Success -> {
+            val postsList = response.data
+            Box(
+                modifier = Modifier
+                    .fillMaxHeight()
+                    .fillMaxWidth()
+            ) {
+
+
+                Column(modifier = Modifier
+                        .padding(padding)
+                        .fillMaxHeight()
+                        .fillMaxWidth()
+                        .align(Alignment.TopCenter)) {
+                    Spacer(modifier = Modifier.height((screenHeight * 0.015f).dp))
+
+                    SearchBar(navController = navController)
+
+                    Spacer(modifier = Modifier.height((screenHeight * 0.015f).dp))
+
+                    Text(
+                        modifier = Modifier.padding(horizontal = 20.dp),
+                        text = "Guilds",
+                        fontFamily = gilroy,
+                        fontWeight = FontWeight.W600,
+                        fontSize = 14.sp,
+                        lineHeight = 17.15.sp,
+                        color = Color.Black
+                    )
+
+                    Spacer(modifier = Modifier.height((screenHeight * 0.02f).dp))
+
+                    GuildScrollableRow(navController = navController)
+
+                    Spacer(modifier = Modifier.height((screenHeight * 0.04f).dp))
+
+                    Text(
+                        modifier = Modifier.padding(horizontal = 20.dp),
+                        text = "Chats",
+                        fontFamily = gilroy,
+                        fontWeight = FontWeight.W600,
+                        fontSize = 14.sp,
+                        lineHeight = 17.15.sp,
+                        color = Color.Black
+                    )
+
+                    Spacer(modifier = Modifier.height((screenHeight * 0.02f).dp))
+
+                    LazyColumn(
+                        modifier = Modifier
+                            .fillMaxWidth(),
+                        // .height((screenHeight*0.6f).dp),
+                        verticalArrangement = Arrangement.spacedBy(24.dp)
+                    ) {
+                        items(postsList) { item ->
+                            UserChatItem(postDetails = item, navController)
+                        }
+                    }
+                }
+
+                FloatingActionButton(
+                    modifier = Modifier
+                        .align(Alignment.BottomEnd)
+                        .offset(y = -(screenHeight * 0.135f).dp, x = -(20).dp),
+                    onClick = {
+                        navController.navigate(Destinations.NewDiscussionScreen.route)
+                    }
+                )
+
+
             }
-        )
-
-
+        }
     }
 
 

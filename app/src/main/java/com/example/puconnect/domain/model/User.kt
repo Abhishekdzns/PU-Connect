@@ -1,5 +1,10 @@
 package com.example.puconnect.domain.model
 
+import android.os.Parcel
+import android.os.Parcelable
+import kotlinx.parcelize.Parcelize
+
+@Parcelize
 data class User(
     var name: String = "",
     var userName: String = "",
@@ -16,4 +21,4 @@ data class User(
     var college: String = "",
     var city: String = "",
     var totalPosts: String = "",
-)
+) : Parcelable

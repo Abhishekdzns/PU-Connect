@@ -288,7 +288,6 @@ fun CreateDiscussion(
                     postType = selectedGuild,
                     postUser = User(),
                     engageCount = 0,
-                    engageList = listOf()
                 )
             )
 

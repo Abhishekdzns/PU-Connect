@@ -1,5 +1,6 @@
 package com.example.puconnect.presentation.navigation
 
+import android.util.Log
 import android.widget.Toast
 import androidx.compose.animation.ExperimentalAnimationApi
 import androidx.compose.animation.core.tween
@@ -11,6 +12,7 @@ import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.platform.LocalContext
 import androidx.navigation.NavHostController
+import com.example.puconnect.domain.model.Post
 import com.example.puconnect.domain.model.Skill
 import com.example.puconnect.mockdata.home.codeGuildQueList
 import com.example.puconnect.mockdata.home.designGuildQueList
@@ -142,6 +144,7 @@ fun BottomNavGraph(navController: NavHostController, padding: PaddingValues) {
                 ) + fadeIn(animationSpec = tween(300))
             }
         ) {
+//            TODO change the guildList with the type of name! and let the guildScreen make API Call
             GuildScreen(guildName = "Coding Guild", guildList = codeGuildQueList, navController)
         }
 
@@ -257,21 +260,13 @@ fun BottomNavGraph(navController: NavHostController, padding: PaddingValues) {
                     initialOffsetX = { 1000 }
                 ) + fadeIn(animationSpec = tween(300))
             }
-        ) { navBackStackEntry ->
-            val questionId = navBackStackEntry.arguments?.getString("queId")
-            if (questionId == null) {
-                Toast.makeText(
-                    LocalContext.current,
-                    "userId is required for navigation",
-                    Toast.LENGTH_SHORT
-                )
-                    .show()
-            } else {
-                val queData = userQueList.find { userQueData ->
-                    userQueData.questionId == questionId
-                } ?: siddhiQue
-                ChatScreen(queData = queData, navController)
+        ) {
+            val post =
+                navController.previousBackStackEntry?.savedStateHandle?.get<Post>("postDetails")
+            if (post!=null){
+                Log.d("CHECKINGPOST", "BottomNavGraph: ${post.postTitle} and ${post.postDesc}")
             }
+            ChatScreen(queData = post ?: Post(), navController)
         }
 
         composable(
@@ -357,8 +352,9 @@ fun BottomNavGraph(navController: NavHostController, padding: PaddingValues) {
                 ) + fadeIn(animationSpec = tween(300))
             }
         ) {
-            val mySkillsList = navController.previousBackStackEntry?.savedStateHandle?.get<List<Skill>>("mySkillsList")
-            SkillsScreen(navController = navController, mySkillsList?: listOf())
+            val mySkillsList =
+                navController.previousBackStackEntry?.savedStateHandle?.get<List<Skill>>("mySkillsList")
+            SkillsScreen(navController = navController, mySkillsList ?: listOf())
         }
 
         composable(
@@ -381,8 +377,9 @@ fun BottomNavGraph(navController: NavHostController, padding: PaddingValues) {
                 ) + fadeIn(animationSpec = tween(300))
             }
         ) {
-            val mySkillsList = navController.previousBackStackEntry?.savedStateHandle?.get<List<Skill>>("mySkillsList")
-            SkillValueScreen(navController = navController, mySkillsList?: listOf())
+            val mySkillsList =
+                navController.previousBackStackEntry?.savedStateHandle?.get<List<Skill>>("mySkillsList")
+            SkillValueScreen(navController = navController, mySkillsList ?: listOf())
         }
 
 

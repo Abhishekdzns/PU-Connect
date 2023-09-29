@@ -14,8 +14,11 @@ import com.example.puconnect.domain.use_cases.AuthenticationUseCases.FirebaseSig
 import com.example.puconnect.domain.use_cases.AuthenticationUseCases.FirebaseSignOut
 import com.example.puconnect.domain.use_cases.AuthenticationUseCases.FirebaseSignUp
 import com.example.puconnect.domain.use_cases.AuthenticationUseCases.isUserAuthenticated
+import com.example.puconnect.domain.use_cases.PostUseCases.GetMessagesByPost
+import com.example.puconnect.domain.use_cases.PostUseCases.GetPostByGuild
 import com.example.puconnect.domain.use_cases.PostUseCases.GetPosts
 import com.example.puconnect.domain.use_cases.PostUseCases.PostUseCases
+import com.example.puconnect.domain.use_cases.PostUseCases.UploadMessage
 import com.example.puconnect.domain.use_cases.PostUseCases.UploadPost
 import com.example.puconnect.domain.use_cases.SkillsUseCases.GetSkills
 import com.example.puconnect.domain.use_cases.SkillsUseCases.SkillsUseCases
@@ -127,7 +130,9 @@ object PuconnectModule {
     fun providePostUseCases(postRepositoryImpl: PostRepositoryImpl) =
         PostUseCases(
             getPosts = GetPosts(repository = postRepositoryImpl),
-            uploadPost = UploadPost(repository = postRepositoryImpl)
-
+            uploadPost = UploadPost(repository = postRepositoryImpl),
+            getPostByGuild = GetPostByGuild(repository = postRepositoryImpl),
+            getMessagesByPost = GetMessagesByPost(repository = postRepositoryImpl),
+            uploadMessage = UploadMessage(repository = postRepositoryImpl)
         )
 }

@@ -1,5 +1,6 @@
 package com.example.puconnect.presentation.homescreen.components
 
+import android.util.Log
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
@@ -40,11 +41,17 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavHostController
+import coil.annotation.ExperimentalCoilApi
+import coil.compose.rememberImagePainter
+import coil.transform.CircleCropTransformation
 import com.example.puconnect.R
+import com.example.puconnect.domain.model.Post
+import com.example.puconnect.domain.model.User
 import com.example.puconnect.mockdata.home.Guild
 import com.example.puconnect.mockdata.home.UserQueData
 import com.example.puconnect.mockdata.home.aiGuild
 import com.example.puconnect.mockdata.home.designGuild
+import com.example.puconnect.mockdata.home.guildList
 import com.example.puconnect.mockdata.home.siddhiQue
 import com.example.puconnect.presentation.navigation.Destinations
 import com.example.puconnect.ui.theme.gilroy
@@ -52,57 +59,76 @@ import com.example.puconnect.ui.theme.textFieldBorder
 
 @Composable
 fun UserChatItem(
-     userQueData: UserQueData,
-     navController: NavHostController
+    postDetails: Post,
+    navController: NavHostController
 ) {
-    Column (
+    Column(
         modifier = Modifier
             .padding(horizontal = 20.dp)
             .border(width = (0.25).dp, shape = RoundedCornerShape(4.dp), color = textFieldBorder)
 
-    ){
-        UserChatItemSec1(userPhoto = userQueData.userPhoto, userName = userQueData.userName, modifier = Modifier.padding(8.dp))
+    ) {
+        UserChatItemSec1(user = postDetails.postUser, modifier = Modifier.padding(8.dp))
 
         Divider(thickness = (0.25).dp, color = textFieldBorder)
 
-        UserChatItemSec2(question = userQueData.question, relatedGuilds = userQueData.guildList)
+        UserChatItemSec2(question = postDetails.postTitle, relatedGuilds = postDetails.postType)
 
         Divider(thickness = (0.25).dp, color = textFieldBorder)
+
+        Log.d("CHECKINGPOST", "UserChatItem: ${postDetails.postTitle} and ${postDetails.postDesc}")
+
+//        navController.currentBackStackEntry?.savedStateHandle?.set(
+//            key = "postDetails",
+//            value = postDetails
+//        )
 
         UserChatItemSec3(
-            engageCount = userQueData.engageCount,
-            onEngageClick = { navController.navigate(Destinations.ChatScreen.createRoute(userQueData.questionId))}
+            engageCount = postDetails.engageCount,
+            onEngageClick = {
+                navController.currentBackStackEntry?.savedStateHandle?.set(
+                    key = "postDetails",
+                    value = postDetails
+                )
+                navController.navigate(Destinations.ChatScreen.createRoute(postDetails.postTitle)) }
         )
     }
 
 }
 
+@OptIn(ExperimentalCoilApi::class)
 @Composable
 fun UserChatItemSec1(
-    userPhoto: Int,
-    userName: String,
+    user: User,
     modifier: Modifier = Modifier
 ) {
-    Row (
+    Row(
         verticalAlignment = Alignment.CenterVertically,
         modifier = modifier
-    ){
+    ) {
+        val profileImagePainter = rememberImagePainter(
+            data = user.imageUrl,
+            builder = {
+                // You can apply transformations here if needed
+                transformations(CircleCropTransformation())
+            }
+        )
         Image(
             modifier = Modifier
                 .size(24.dp)
                 .clip(CircleShape),
-            painter = painterResource(id = userPhoto),
+            painter = profileImagePainter,
             contentDescription = null,
-            )
-        
+        )
+
         Text(
             modifier = Modifier.padding(8.dp),
-            text = userName,
+            text = user.userName,
             fontFamily = gilroy,
             fontSize = 12.sp,
             lineHeight = 14.56.sp,
             color = Color.Black
-            )
+        )
     }
 
 }
@@ -110,13 +136,13 @@ fun UserChatItemSec1(
 @Composable
 fun UserChatItemSec2(
     question: String,
-    relatedGuilds: List<Guild>
+    relatedGuilds: String
 ) {
     val screenHeight = LocalConfiguration.current.screenHeightDp
 
-    Column (
+    Column(
         modifier = Modifier
-           // .height((screenHeight * 0.18f).dp)
+            // .height((screenHeight * 0.18f).dp)
             .padding(8.dp)
     ) {
         Text(
@@ -127,16 +153,22 @@ fun UserChatItemSec2(
             lineHeight = 17.15.sp,
             color = Color.Black
         )
-        
+
         Spacer(modifier = Modifier.height(10.dp))
 
-        LazyRow(
-            horizontalArrangement = Arrangement.spacedBy(8.dp)
-        ) {
-            items(relatedGuilds) { guild->
-                GuildItemChip(iconId = guild.iconId, labelName = guild.guildName)
+        var guild = Guild(
+            iconId = R.drawable.code,
+            guildName = "Coding Guild",
+            destination = Destinations.CodingGuildScreen
+        )
+
+        guildList.forEach {
+            if (it.guildName == relatedGuilds) {
+                guild = it
             }
         }
+
+        GuildItemChip(iconId = guild.iconId, labelName = guild.guildName)
     }
 
 }
@@ -146,7 +178,7 @@ fun UserChatItemSec3(
     engageCount: Int,
     onEngageClick: () -> Unit
 ) {
-    Row (
+    Row(
         modifier = Modifier
             .fillMaxWidth()
             .padding(8.dp),
@@ -210,7 +242,7 @@ fun UserChatItemSec3(
                 containerColor = Color.Black
             ),
             shape = RoundedCornerShape(4.dp)
-            ) {
+        ) {
             Text(
                 //modifier = Modifier.padding(8.dp),
                 text = "Engage",
@@ -220,13 +252,14 @@ fun UserChatItemSec3(
                 lineHeight = 12.13.sp,
                 color = Color.White
             )
-            
+
             Icon(
                 modifier = Modifier
                     .padding(start = 10.dp)
                     .size(14.dp),
                 imageVector = ImageVector.vectorResource(id = R.drawable.arrowright),
-                contentDescription = null)
+                contentDescription = null
+            )
         }
     }
 }
@@ -249,11 +282,12 @@ fun GuildItemChip(
                 fontWeight = FontWeight.W500,
                 fontSize = 8.sp,
                 lineHeight = 9.7.sp
-                ) },
+            )
+        },
         border = AssistChipDefaults.assistChipBorder(
             borderColor = textFieldBorder,
             borderWidth = (0.25).dp
-            ),
+        ),
         leadingIcon = {
             Box(
                 modifier = Modifier
@@ -270,9 +304,8 @@ fun GuildItemChip(
                 )
             }
         }
-        )
+    )
 }
-
 
 
 @Preview(showSystemUi = false, showBackground = true)

@@ -14,6 +14,8 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import com.example.puconnect.domain.model.Post
+import com.example.puconnect.domain.model.User
 import com.example.puconnect.mockdata.home.UserQueData
 import com.example.puconnect.mockdata.home.siddhiQue
 import com.example.puconnect.presentation.homescreen.components.UserChatItemSec1
@@ -22,26 +24,26 @@ import com.example.puconnect.ui.theme.textFieldBorder
 
 @Composable
 fun UserSection(
-    userQueData: UserQueData,
+    userQueData: Post,
     modifier: Modifier = Modifier
 ) {
 
     val screenHeight = LocalConfiguration.current.screenHeightDp
     val screenWidth = LocalConfiguration.current.screenWidthDp
-    Column (
-        modifier = modifier.width((screenWidth*0.812f).dp)
+    Column(
+        modifier = modifier.width((screenWidth * 0.812f).dp)
     ) {
 
-       // Spacer(modifier = Modifier.height((screenHeight*0.019).dp))
+        // Spacer(modifier = Modifier.height((screenHeight*0.019).dp))
         Spacer(modifier = Modifier.height(16.dp))
 
-        UserChatItemSec1(userPhoto = userQueData.userPhoto, userName = userQueData.userName)
+        UserChatItemSec1(userQueData.postUser)
 
         //Spacer(modifier = Modifier.height((screenHeight*0.019).dp))
         Spacer(modifier = Modifier.height(16.dp))
 
         Text(
-            text = userQueData.question,
+            text = userQueData.postTitle,
             fontFamily = gilroy,
             fontWeight = FontWeight.W600,
             fontSize = 20.sp,
@@ -53,7 +55,7 @@ fun UserSection(
         Spacer(modifier = Modifier.height(24.dp))
 
         Text(
-            text = userQueData.queDetails,
+            text = userQueData.postDesc,
             fontFamily = gilroy,
             fontWeight = FontWeight.W500,
             fontSize = 12.sp,
@@ -72,5 +74,5 @@ fun UserSection(
 @Preview(showSystemUi = false, showBackground = true)
 @Composable
 fun UserSectionPreview() {
-    UserSection(userQueData = siddhiQue)
+//    UserSection(userQueData = POs)
 }

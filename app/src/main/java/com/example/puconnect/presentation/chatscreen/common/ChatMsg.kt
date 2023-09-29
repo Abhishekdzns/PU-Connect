@@ -15,18 +15,20 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import com.example.puconnect.domain.model.Chat
 import com.example.puconnect.mockdata.chat.ChatMsg
 import com.example.puconnect.mockdata.chat.msg1
 import com.example.puconnect.ui.theme.gilroy
 import com.example.puconnect.ui.theme.textFieldBorder
+import com.example.puconnect.util.RandomColor
 
 
 @Composable
 fun MessageBox(
-    chatMsg: ChatMsg
+    chatMsg: Chat
 ) {
     val screenwidth = LocalConfiguration.current.screenWidthDp
-    Column (
+    Column(
         modifier = Modifier
             .width((screenwidth * 0.753).dp)
             .wrapContentHeight()
@@ -34,22 +36,22 @@ fun MessageBox(
                 width = (0.25).dp,
                 color = textFieldBorder,
                 shape = RoundedCornerShape(12.dp)
-                )
+            )
             .padding(vertical = 12.dp, horizontal = 10.dp)
-    ){
+    ) {
 
         Text(
             modifier = Modifier.padding(bottom = 16.dp),
-            text = chatMsg.user,
+            text = chatMsg.userName,
             fontFamily = gilroy,
             fontWeight = FontWeight.W600,
             fontSize = 14.sp,
             lineHeight = 17.15.sp,
-            color = chatMsg.color
+            color = RandomColor().getRandomColor()
         )
 
         Text(
-            text = chatMsg.message,
+            text = chatMsg.postDesc,
             fontFamily = gilroy,
             fontWeight = FontWeight.W500,
             fontSize = 14.sp,
@@ -65,5 +67,5 @@ fun MessageBox(
 @Preview(showSystemUi = true)
 @Composable
 fun MessageBoxPreview() {
-    MessageBox(chatMsg = msg1)
+    MessageBox(chatMsg = Chat("Purab","Someone did this"))
 }

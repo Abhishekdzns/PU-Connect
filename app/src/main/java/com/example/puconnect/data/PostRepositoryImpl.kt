@@ -7,7 +7,9 @@ import com.example.puconnect.domain.model.User
 import com.example.puconnect.domain.repository.PostRepository
 import com.example.puconnect.util.Constants
 import com.example.puconnect.util.Response
+import com.google.firebase.firestore.FieldValue
 import com.google.firebase.firestore.FirebaseFirestore
+import com.google.firebase.firestore.Query
 import kotlinx.coroutines.channels.awaitClose
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.callbackFlow
@@ -23,6 +25,7 @@ class PostRepositoryImpl @Inject constructor(
     override fun getAllPosts(): Flow<Response<List<Post>>> = callbackFlow {
         Response.Loading
         val snapShotListener = firebaseFirestore.collection(Constants.COLLECTION_NAME_POSTS)
+            .orderBy("timestamp", Query.Direction.DESCENDING)
             .addSnapshotListener { snapShot, e ->
                 val response = if (snapShot != null) {
                     val postList = snapShot.toObjects(Post::class.java)
@@ -41,6 +44,7 @@ class PostRepositoryImpl @Inject constructor(
         Response.Loading
         val snapShotListener = firebaseFirestore.collection(Constants.COLLECTION_NAME_POSTS)
             .whereEqualTo("postType", guildName)
+            .orderBy("timestamp", Query.Direction.DESCENDING)
             .addSnapshotListener { snapShot, e ->
                 val response = if (snapShot != null) {
                     val postList = snapShot.toObjects(Post::class.java)
@@ -60,6 +64,7 @@ class PostRepositoryImpl @Inject constructor(
         val snapShotListener = firebaseFirestore.collection(Constants.COLLECTION_NAME_POSTS)
             .document(postId)
             .collection(Constants.COLLECTION_NAME_CHATS)
+            .orderBy("timestamp", Query.Direction.ASCENDING)
             .addSnapshotListener { snapShot, e ->
                 val response = if (snapShot != null) {
                     val chatList = snapShot.toObjects(Chat::class.java)
@@ -88,6 +93,12 @@ class PostRepositoryImpl @Inject constructor(
                 }.await()
 
             post.postUser = user
+            post.timestamp = System.currentTimeMillis()
+
+            Log.d(
+                "CHECKINGPOST",
+                "uploadPost: ${user.name} and postdetails = ${post.postUser.name}"
+            )
 
             val docRef = firebaseFirestore.collection(Constants.COLLECTION_NAME_POSTS).document()
             post.postId = docRef.id
@@ -124,6 +135,7 @@ class PostRepositoryImpl @Inject constructor(
                 }.await()
 
             chat.userName = user.userName
+            chat.timestamp = System.currentTimeMillis()
 
             val docRef =
                 firebaseFirestore.collection(Constants.COLLECTION_NAME_POSTS).document(postId)

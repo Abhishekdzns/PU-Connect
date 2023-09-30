@@ -13,6 +13,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavHostController
+import com.example.puconnect.domain.model.User
 import com.example.puconnect.mockdata.network.NetworkUserData
 import com.example.puconnect.ui.theme.textFieldBorder
 
@@ -20,13 +21,13 @@ import com.example.puconnect.ui.theme.textFieldBorder
 @Composable
 fun NetworkUserInfo(
     navController: NavHostController,
-    networkUserData: NetworkUserData
+    networkUserData: User
 ) {
 
-    Column () {
+    Column() {
         Spacer(modifier = Modifier.height(8.dp))
 
-        Column (
+        Column(
             modifier = Modifier
                 .fillMaxWidth()
                 .wrapContentHeight()
@@ -50,9 +51,7 @@ fun NetworkUserInfo(
         Spacer(modifier = Modifier.height(8.dp))
 
 
-
     }
-
 
 
 }
@@ -60,5 +59,5 @@ fun NetworkUserInfo(
 @Preview(showSystemUi = false, showBackground = true)
 @Composable
 fun NetworkUserInfoPreview() {
-   // NetworkUserInfo(networkUserData = netUser1)
+    // NetworkUserInfo(networkUserData = netUser1)
 }

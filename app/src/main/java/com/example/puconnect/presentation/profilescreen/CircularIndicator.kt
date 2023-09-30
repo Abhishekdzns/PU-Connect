@@ -78,20 +78,20 @@ fun CustomComponent(
 
     Column(
         modifier = Modifier
-            .size((screenWidth*0.301f).dp)
+            .size((screenWidth * 0.301f).dp)
             .drawBehind {
                 val componentSize = size / 1.25f
                 backgroundIndicator(
                     componentSize = componentSize,
                     indicatorColor = backgroundIndicatorColor,
-                    indicatorStrokeWidth = (screenWidth*0.051f),
+                    indicatorStrokeWidth = (screenWidth * 0.051f),
 //                    indicatorStokeCap = indicatorStrokeCap
                 )
                 foregroundIndicator(
                     sweepAngle = sweepAngle,
                     componentSize = componentSize,
                     indicatorColor = foregroundIndicatorColor,
-                    indicatorStrokeWidth = (screenWidth*0.051f),
+                    indicatorStrokeWidth = (screenWidth * 0.051f),
 //                    indicatorStokeCap = indicatorStrokeCap
                 )
             },
@@ -169,20 +169,22 @@ fun EmbeddedElements(
 @Composable
 fun MyCircle(
     percentage: Int,
-    skillName: String
+    skillName: String,
+    itemSize: Dp
 ) {
 
     val screenWidth = LocalConfiguration.current.screenWidthDp
-    Column (
+    Column(
         horizontalAlignment = Alignment.CenterHorizontally,
         modifier = Modifier.wrapContentHeight()
-    ){
-        Box(modifier = Modifier
-            .size((screenWidth*0.266f).dp)
-            .border(
-                color = textFieldBorder,
-                width = (0.25).dp, shape = CircleShape
-            ),
+    ) {
+        Box(
+            modifier = Modifier
+                .size(itemSize)
+                .border(
+                    color = textFieldBorder,
+                    width = (0.25).dp, shape = CircleShape
+                ),
             contentAlignment = Alignment.Center
         ) {
             CustomComponent(indicatorValue = percentage)

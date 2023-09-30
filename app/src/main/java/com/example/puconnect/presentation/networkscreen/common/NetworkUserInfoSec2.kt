@@ -11,6 +11,7 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import com.example.puconnect.domain.model.User
 import com.example.puconnect.mockdata.network.NetworkUserData
 import com.example.puconnect.mockdata.network.netUser1
 import com.example.puconnect.ui.theme.addressColor
@@ -18,7 +19,7 @@ import com.example.puconnect.ui.theme.gilroy
 
 @Composable
 fun NetworkUserInfoSec2(
-    networkUserData: NetworkUserData
+    networkUserData: User
 ) {
     Column {
         Spacer(modifier = Modifier.height(8.dp))
@@ -53,5 +54,5 @@ fun NetworkUserInfoSec2(
 @Preview(showSystemUi = false, showBackground = true)
 @Composable
 fun NetworkUserInfo2Preview() {
-    NetworkUserInfoSec2(networkUserData = netUser1)
+//    NetworkUserInfoSec2(networkUserData = netUser1)
 }

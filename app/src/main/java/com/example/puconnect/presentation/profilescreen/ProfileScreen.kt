@@ -297,7 +297,7 @@ fun SkillCircles(
     ) {
 
         item {
-            val itemSize: Dp = (LocalConfiguration.current.screenWidthDp.dp / 3)
+            val itemSize: Dp = (LocalConfiguration.current.screenWidthDp.dp / 4)
             FlowRow(
                 mainAxisSize = SizeMode.Expand,
                 mainAxisAlignment = FlowMainAxisAlignment.SpaceBetween,
@@ -305,7 +305,8 @@ fun SkillCircles(
                 obj.skills.forEach { skill ->
                     MyCircle(
                         percentage = skill.percentage.toInt(),
-                        skillName = skill.skillName
+                        skillName = skill.skillName,
+                        itemSize = itemSize
                     )
                 }
             }

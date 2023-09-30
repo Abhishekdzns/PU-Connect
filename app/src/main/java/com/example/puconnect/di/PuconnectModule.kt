@@ -1,10 +1,12 @@
 package com.example.puconnect.di
 
 import com.example.puconnect.data.AuthenticationRepositoryImplementation
+import com.example.puconnect.data.NetworkRepositoryImpl
 import com.example.puconnect.data.PostRepositoryImpl
 import com.example.puconnect.data.SkillsRepositoryImpl
 import com.example.puconnect.data.UserRepositoryImpl
 import com.example.puconnect.domain.repository.AuthenticationRepository
+import com.example.puconnect.domain.repository.NetworkRepository
 import com.example.puconnect.domain.repository.PostRepository
 import com.example.puconnect.domain.repository.SkillsRepository
 import com.example.puconnect.domain.repository.UserRepository
@@ -14,6 +16,8 @@ import com.example.puconnect.domain.use_cases.AuthenticationUseCases.FirebaseSig
 import com.example.puconnect.domain.use_cases.AuthenticationUseCases.FirebaseSignOut
 import com.example.puconnect.domain.use_cases.AuthenticationUseCases.FirebaseSignUp
 import com.example.puconnect.domain.use_cases.AuthenticationUseCases.isUserAuthenticated
+import com.example.puconnect.domain.use_cases.NetworkUseCases.GetAllUsers
+import com.example.puconnect.domain.use_cases.NetworkUseCases.NetworkUseCases
 import com.example.puconnect.domain.use_cases.PostUseCases.GetMessagesByPost
 import com.example.puconnect.domain.use_cases.PostUseCases.GetPostByGuild
 import com.example.puconnect.domain.use_cases.PostUseCases.GetPosts
@@ -134,5 +138,18 @@ object PuconnectModule {
             getPostByGuild = GetPostByGuild(repository = postRepositoryImpl),
             getMessagesByPost = GetMessagesByPost(repository = postRepositoryImpl),
             uploadMessage = UploadMessage(repository = postRepositoryImpl)
+        )
+
+    @Singleton
+    @Provides
+    fun provideNetworkRepository(firestore: FirebaseFirestore): NetworkRepository {
+        return NetworkRepositoryImpl(firestore)
+    }
+
+    @Singleton
+    @Provides
+    fun provideNetworkUseCases(networkRepository: NetworkRepository) =
+        NetworkUseCases(
+            getAllUsers = GetAllUsers(repository = networkRepository)
         )
 }

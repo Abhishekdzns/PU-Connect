@@ -16,31 +16,32 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import com.example.puconnect.domain.model.User
 import com.example.puconnect.mockdata.network.NetworkUserData
 import com.example.puconnect.ui.theme.gilroy
 import com.example.puconnect.ui.theme.textFieldBorder
 
 @Composable
 fun NetworkUserInfoSec3(
-    networkUserData: NetworkUserData
+    networkUserData: User
 ) {
-    Column (
+    Column(
         verticalArrangement = Arrangement.spacedBy(4.dp)
-    ){
-        Row (
+    ) {
+        Row(
             verticalAlignment = Alignment.CenterVertically,
             horizontalArrangement = Arrangement.spacedBy(4.dp)
         ) {
-            networkUserData.skills.take(4).forEach {skillName ->
-                SkillChip(skillName = skillName)
+            networkUserData.skills.take(4).forEach { skill ->
+                SkillChip(skillName = skill.skillName)
             }
         }
 
-        Row (
+        Row(
             verticalAlignment = Alignment.CenterVertically,
             horizontalArrangement = Arrangement.spacedBy(4.dp)
         ) {
-            SkillChip(skillName = networkUserData.skills[4])
+            SkillChip(skillName = networkUserData.skills[4].skillName)
             SkillChip(skillName = "+${networkUserData.skills.size - 5}")
         }
     }
@@ -52,7 +53,7 @@ fun NetworkUserInfoSec3(
 fun SkillChip(
     skillName: String
 ) {
-    Box (
+    Box(
         modifier = Modifier
             .height(23.dp)
             .wrapContentWidth()
@@ -60,10 +61,9 @@ fun SkillChip(
                 shape = RoundedCornerShape(4.dp),
                 width = (0.5).dp,
                 color = textFieldBorder
-            )
-        ,
+            ),
         contentAlignment = Alignment.Center
-    ){
+    ) {
         Text(
             modifier = Modifier.padding(horizontal = 8.dp),
             text = skillName,

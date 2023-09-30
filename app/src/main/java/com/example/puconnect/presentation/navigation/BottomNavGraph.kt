@@ -144,7 +144,6 @@ fun BottomNavGraph(navController: NavHostController, padding: PaddingValues) {
                 ) + fadeIn(animationSpec = tween(300))
             }
         ) {
-//            TODO change the guildList with the type of name! and let the guildScreen make API Call
             GuildScreen(guildName = "Coding Guild", guildList = codeGuildQueList, navController)
         }
 
@@ -263,7 +262,7 @@ fun BottomNavGraph(navController: NavHostController, padding: PaddingValues) {
         ) {
             val post =
                 navController.previousBackStackEntry?.savedStateHandle?.get<Post>("postDetails")
-            if (post!=null){
+            if (post != null) {
                 Log.d("CHECKINGPOST", "BottomNavGraph: ${post.postTitle} and ${post.postDesc}")
             }
             ChatScreen(queData = post ?: Post(), navController)

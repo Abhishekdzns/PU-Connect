@@ -26,7 +26,11 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavHost
 import androidx.navigation.NavHostController
+import coil.annotation.ExperimentalCoilApi
+import coil.compose.rememberImagePainter
+import coil.transform.CircleCropTransformation
 import com.example.puconnect.R
+import com.example.puconnect.domain.model.User
 import com.example.puconnect.mockdata.network.NetworkUserData
 import com.example.puconnect.mockdata.network.netUser1
 import com.example.puconnect.presentation.navigation.Destinations
@@ -35,10 +39,11 @@ import com.example.puconnect.ui.theme.gilroy
 import com.example.puconnect.ui.theme.textFieldBorder
 
 
+@OptIn(ExperimentalCoilApi::class)
 @Composable
 fun NetworkUserInfoSec1(
     navController: NavHostController,
-    networkUserData: NetworkUserData
+    networkUserData: User
 ) {
     Row(
         modifier = Modifier
@@ -50,11 +55,18 @@ fun NetworkUserInfoSec1(
         Row(
             verticalAlignment = Alignment.CenterVertically,
         ) {
+            val profileImagePainter = rememberImagePainter(
+                data = networkUserData.imageUrl,
+                builder = {
+                    // You can apply transformations here if needed
+                    transformations(CircleCropTransformation())
+                }
+            )
             Image(
                 modifier = Modifier
                     .size(40.dp)
                     .clip(CircleShape),
-                painter = painterResource(id = networkUserData.profilePic),
+                painter = profileImagePainter,
                 contentDescription = null,
             )
 
@@ -90,7 +102,7 @@ fun NetworkUserInfoSec1(
                     Spacer(modifier = Modifier.width(4.dp))
 
                     Text(
-                        text = networkUserData.address,
+                        text = networkUserData.city,
                         fontFamily = gilroy,
                         fontWeight = FontWeight.W400,
                         fontSize = 12.sp,
@@ -112,7 +124,7 @@ fun NetworkUserInfoSec1(
                         .DirectMessageScreen
                         .createRoute(
                             name = networkUserData.name,
-                            photoId = networkUserData.profilePic.toString()
+                            photoId = networkUserData.imageUrl.toString()
                         )
                 )
         }, title = "Message")

@@ -2,12 +2,14 @@ package com.example.puconnect.di
 
 import com.example.puconnect.data.AuthenticationRepositoryImplementation
 import com.example.puconnect.data.EventRepositoryImpl
+import com.example.puconnect.data.MessageRepositoryImpl
 import com.example.puconnect.data.NetworkRepositoryImpl
 import com.example.puconnect.data.PostRepositoryImpl
 import com.example.puconnect.data.SkillsRepositoryImpl
 import com.example.puconnect.data.UserRepositoryImpl
 import com.example.puconnect.domain.repository.AuthenticationRepository
 import com.example.puconnect.domain.repository.EventRepository
+import com.example.puconnect.domain.repository.MessageRepository
 import com.example.puconnect.domain.repository.NetworkRepository
 import com.example.puconnect.domain.repository.PostRepository
 import com.example.puconnect.domain.repository.SkillsRepository
@@ -21,6 +23,10 @@ import com.example.puconnect.domain.use_cases.AuthenticationUseCases.isUserAuthe
 import com.example.puconnect.domain.use_cases.EventUseCases.EventUseCases
 import com.example.puconnect.domain.use_cases.EventUseCases.GetAllEvents
 import com.example.puconnect.domain.use_cases.EventUseCases.UploadEvent
+import com.example.puconnect.domain.use_cases.MessageUseCases.GetAllConversations
+import com.example.puconnect.domain.use_cases.MessageUseCases.GetMessagesByUserId
+import com.example.puconnect.domain.use_cases.MessageUseCases.MessageUseCases
+import com.example.puconnect.domain.use_cases.MessageUseCases.SendMessageByUserId
 import com.example.puconnect.domain.use_cases.NetworkUseCases.GetAllUsers
 import com.example.puconnect.domain.use_cases.NetworkUseCases.NetworkUseCases
 import com.example.puconnect.domain.use_cases.PostUseCases.GetMessagesByPost
@@ -170,5 +176,20 @@ object PuconnectModule {
         EventUseCases(
             getAllEvents = GetAllEvents(eventRepository),
             uploadEvent = UploadEvent(eventRepository)
+        )
+
+    @Singleton
+    @Provides
+    fun provideMessageRepository(firestore: FirebaseFirestore): MessageRepository {
+        return MessageRepositoryImpl(firestore)
+    }
+
+    @Singleton
+    @Provides
+    fun provideMessageUseCases(messageRepository: MessageRepository) =
+        MessageUseCases(
+            getAllConversations = GetAllConversations(messageRepository),
+            getMessagesByUserId = GetMessagesByUserId(messageRepository),
+            sendMessageByUserId = SendMessageByUserId(messageRepository)
         )
 }

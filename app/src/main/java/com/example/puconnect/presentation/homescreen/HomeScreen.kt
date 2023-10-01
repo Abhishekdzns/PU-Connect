@@ -31,9 +31,11 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavHostController
+import com.example.puconnect.domain.model.Message
 import com.example.puconnect.mockdata.home.UserQueData
 import com.example.puconnect.mockdata.home.userQueList
 import com.example.puconnect.presentation.Toast
+import com.example.puconnect.presentation.ViewModels.MessageViewModel
 import com.example.puconnect.presentation.ViewModels.PostViewModel
 import com.example.puconnect.presentation.homescreen.components.BottomNavigationBar
 import com.example.puconnect.presentation.homescreen.components.FloatingActionButton
@@ -76,11 +78,13 @@ fun HomeScreen(
             ) {
 
 
-                Column(modifier = Modifier
+                Column(
+                    modifier = Modifier
                         .padding(padding)
                         .fillMaxHeight()
                         .fillMaxWidth()
-                        .align(Alignment.TopCenter)) {
+                        .align(Alignment.TopCenter)
+                ) {
                     Spacer(modifier = Modifier.height((screenHeight * 0.015f).dp))
 
                     SearchBar(navController = navController)

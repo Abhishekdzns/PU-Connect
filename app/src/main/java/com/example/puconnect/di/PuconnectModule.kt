@@ -1,11 +1,13 @@
 package com.example.puconnect.di
 
 import com.example.puconnect.data.AuthenticationRepositoryImplementation
+import com.example.puconnect.data.EventRepositoryImpl
 import com.example.puconnect.data.NetworkRepositoryImpl
 import com.example.puconnect.data.PostRepositoryImpl
 import com.example.puconnect.data.SkillsRepositoryImpl
 import com.example.puconnect.data.UserRepositoryImpl
 import com.example.puconnect.domain.repository.AuthenticationRepository
+import com.example.puconnect.domain.repository.EventRepository
 import com.example.puconnect.domain.repository.NetworkRepository
 import com.example.puconnect.domain.repository.PostRepository
 import com.example.puconnect.domain.repository.SkillsRepository
@@ -16,6 +18,9 @@ import com.example.puconnect.domain.use_cases.AuthenticationUseCases.FirebaseSig
 import com.example.puconnect.domain.use_cases.AuthenticationUseCases.FirebaseSignOut
 import com.example.puconnect.domain.use_cases.AuthenticationUseCases.FirebaseSignUp
 import com.example.puconnect.domain.use_cases.AuthenticationUseCases.isUserAuthenticated
+import com.example.puconnect.domain.use_cases.EventUseCases.EventUseCases
+import com.example.puconnect.domain.use_cases.EventUseCases.GetAllEvents
+import com.example.puconnect.domain.use_cases.EventUseCases.UploadEvent
 import com.example.puconnect.domain.use_cases.NetworkUseCases.GetAllUsers
 import com.example.puconnect.domain.use_cases.NetworkUseCases.NetworkUseCases
 import com.example.puconnect.domain.use_cases.PostUseCases.GetMessagesByPost
@@ -151,5 +156,19 @@ object PuconnectModule {
     fun provideNetworkUseCases(networkRepository: NetworkRepository) =
         NetworkUseCases(
             getAllUsers = GetAllUsers(repository = networkRepository)
+        )
+
+    @Singleton
+    @Provides
+    fun provideEventRepository(firestore: FirebaseFirestore): EventRepository {
+        return EventRepositoryImpl(firestore)
+    }
+
+    @Singleton
+    @Provides
+    fun provideEventUseCases(eventRepository: EventRepository) =
+        EventUseCases(
+            getAllEvents = GetAllEvents(eventRepository),
+            uploadEvent = UploadEvent(eventRepository)
         )
 }

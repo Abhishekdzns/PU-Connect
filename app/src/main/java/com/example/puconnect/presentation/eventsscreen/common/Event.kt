@@ -29,18 +29,27 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import coil.annotation.ExperimentalCoilApi
+import coil.compose.rememberImagePainter
+import coil.transform.CircleCropTransformation
 import com.example.puconnect.R
+import com.example.puconnect.domain.model.Event
 import com.example.puconnect.presentation.eventsscreen.EventsScreen
 import com.example.puconnect.presentation.homescreen.components.HorizontalSpacer
 import com.example.puconnect.presentation.networkscreen.common.CustomButton2
 import com.example.puconnect.ui.theme.chatGptcolor
 import com.example.puconnect.ui.theme.gilroy
 
+@OptIn(ExperimentalCoilApi::class)
 @Composable
-fun Event() {
+fun Event(
+    event: Event
+) {
 
-    Column (
-        modifier = Modifier.fillMaxWidth().height(291.dp),
+    Column(
+        modifier = Modifier
+            .fillMaxWidth()
+            .height(291.dp),
         verticalArrangement = Arrangement.Center
     ) {
 
@@ -69,7 +78,7 @@ fun Event() {
 
 
                     Text(
-                        text = "The ultimate",
+                        text = event.eventTitle,
                         fontFamily = gilroy,
                         fontWeight = FontWeight.W600,
                         fontSize = 27.14.sp,
@@ -77,23 +86,23 @@ fun Event() {
                         color = Color.White
                     )
 
-                    Text(
-                        text = "CHATGPT",
-                        fontFamily = gilroy,
-                        fontWeight = FontWeight.W800,
-                        fontSize = 27.14.sp,
-                        lineHeight = 28.1.sp,
-                        color = chatGptcolor
-                    )
-
-                    Text(
-                        text = "Prompt training",
-                        fontFamily = gilroy,
-                        fontWeight = FontWeight.W600,
-                        fontSize = 27.14.sp,
-                        lineHeight = 28.1.sp,
-                        color = Color.White
-                    )
+//                    Text(
+//                        text = "CHATGPT",
+//                        fontFamily = gilroy,
+//                        fontWeight = FontWeight.W800,
+//                        fontSize = 27.14.sp,
+//                        lineHeight = 28.1.sp,
+//                        color = chatGptcolor
+//                    )
+//
+//                    Text(
+//                        text = "Prompt training",
+//                        fontFamily = gilroy,
+//                        fontWeight = FontWeight.W600,
+//                        fontSize = 27.14.sp,
+//                        lineHeight = 28.1.sp,
+//                        color = Color.White
+//                    )
 
                     Spacer(modifier = Modifier.height(16.dp))
 
@@ -110,7 +119,7 @@ fun Event() {
                         HorizontalSpacer(width = 8)
 
                         Text(
-                            text = "Friday, June 09",
+                            text = event.eventDate,
                             fontFamily = gilroy,
                             fontWeight = FontWeight.W500,
                             fontSize = 12.sp,
@@ -135,7 +144,7 @@ fun Event() {
 
 
                         Text(
-                            text = "7:30 PM",
+                            text = event.eventTime,
                             fontFamily = gilroy,
                             fontWeight = FontWeight.W500,
                             fontSize = 12.sp,
@@ -154,7 +163,13 @@ fun Event() {
                     buttonColor = Color.White
                 )
             }
-
+            val eventImagePainter = rememberImagePainter(
+                data = event.eventImageUrl,
+                builder = {
+                    // You can apply transformations here if needed
+                    transformations(CircleCropTransformation())
+                }
+            )
             Image(
                 modifier = Modifier
                     .height(260.dp)
@@ -162,7 +177,7 @@ fun Event() {
                     .clip(RoundedCornerShape(bottomEnd = 4.dp))
                     .align(Alignment.BottomEnd)
                     .offset(x = 36.dp),
-                painter = painterResource(id = R.drawable.adphoto),
+                painter = eventImagePainter,
                 contentDescription = null
             )
 
@@ -174,5 +189,5 @@ fun Event() {
 @Preview(showBackground = true)
 @Composable
 fun Eventpreview() {
-   // EventsScreen()
+    // EventsScreen()
 }

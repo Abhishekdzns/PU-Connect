@@ -118,15 +118,11 @@ fun NetworkUserInfoSec1(
         //Spacer(modifier = Modifier.weight(screenWidth*0.174f))
 
         CustomButton2(onClick = {
-            navController
-                .navigate(
-                    Destinations
-                        .DirectMessageScreen
-                        .createRoute(
-                            name = networkUserData.name,
-                            photoId = networkUserData.imageUrl.toString()
-                        )
-                )
+            navController.currentBackStackEntry?.savedStateHandle?.set(
+                key = "userDetails",
+                value = networkUserData
+            )
+            navController.navigate(Destinations.DirectMessageScreen.route)
         }, title = "Message")
 
 

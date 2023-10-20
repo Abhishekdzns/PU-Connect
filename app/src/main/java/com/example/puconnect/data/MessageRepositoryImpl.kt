@@ -3,10 +3,12 @@ package com.example.puconnect.data
 import android.util.Log
 import com.example.puconnect.domain.model.Conversations
 import com.example.puconnect.domain.model.Message
+import com.example.puconnect.domain.model.User
 import com.example.puconnect.domain.repository.MessageRepository
 import com.example.puconnect.util.Constants
 import com.example.puconnect.util.Response
 import com.google.firebase.firestore.FirebaseFirestore
+import com.google.firebase.firestore.Query
 import kotlinx.coroutines.channels.awaitClose
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.callbackFlow
@@ -48,6 +50,7 @@ class MessageRepositoryImpl @Inject constructor(
             .collection(Constants.COLLECTION_NAME_CONVERSATIONS)
             .document(receiverId)
             .collection(Constants.COLLECTION_NAME_MESSAGES)
+            .orderBy("timeStamp", Query.Direction.ASCENDING)
             .addSnapshotListener { snapShot, e ->
                 val response = if (snapShot != null) {
                     val messageList = snapShot.toObjects(Message::class.java)
@@ -70,20 +73,42 @@ class MessageRepositoryImpl @Inject constructor(
         isOperationSuccess = false
 
         try {
+            val doc = firebaseFirestore.collection(Constants.COLLECTION_NAME_USERS)
+                .document(userId)
+                .get()
+                .await()
+            val from = doc.toObject(User::class.java)?.name
 
-            val docRef =
+            message.from = from ?: " "
+
+            if (from == null) {
+                emit(Response.Error("Not Sent"))
+            }
+
+            val senderRef =
                 firebaseFirestore.collection(Constants.COLLECTION_NAME_USERS).document(userId)
                     .collection(Constants.COLLECTION_NAME_CONVERSATIONS)
                     .document(receiverId)
                     .collection(Constants.COLLECTION_NAME_MESSAGES)
                     .document()
 
-            Log.d("MessageScreenCheck", "sendMessageByUserId: ${docRef.path}")
+            val receiverRef =
+                firebaseFirestore.collection(Constants.COLLECTION_NAME_USERS).document(receiverId)
+                    .collection(Constants.COLLECTION_NAME_CONVERSATIONS)
+                    .document(userId)
+                    .collection(Constants.COLLECTION_NAME_MESSAGES)
+                    .document(senderRef.id)
 
+            message.msgId = senderRef.id
 
-            message.msgId = docRef.id
+            senderRef.set(message)
+                .addOnSuccessListener {
+                    isOperationSuccess = true
+                }.await()
 
-            docRef.set(message)
+            message.isSentByMe = false
+
+            receiverRef.set(message)
                 .addOnSuccessListener {
                     isOperationSuccess = true
                 }.await()

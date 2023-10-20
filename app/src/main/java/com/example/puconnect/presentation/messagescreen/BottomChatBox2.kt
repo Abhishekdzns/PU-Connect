@@ -3,11 +3,13 @@ package com.example.puconnect.presentation.messagescreen
 import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.BottomAppBar
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextField
 import androidx.compose.material3.TextFieldDefaults
@@ -25,21 +27,26 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.example.puconnect.R
+import com.example.puconnect.domain.model.Message
+import com.example.puconnect.domain.model.User
 import com.example.puconnect.ui.theme.gilroy
 import com.example.puconnect.ui.theme.textFieldBorder
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun BottomChatBox2() {
+fun BottomChatBox2(
+    receiverName: String,
+    onSend: (msg: Message) -> Unit
+) {
 
     val screenWidth = LocalConfiguration.current.screenWidthDp
     var typedMsg by remember {
         mutableStateOf("")
     }
 
-    BottomAppBar (
+    BottomAppBar(
         containerColor = Color.Transparent
-    ){
+    ) {
 
         Spacer(modifier = Modifier.width(20.dp))
 
@@ -47,7 +54,7 @@ fun BottomChatBox2() {
 
         TextField(
             value = typedMsg,
-            onValueChange = {typedMsg = it},
+            onValueChange = { typedMsg = it },
             modifier = Modifier
                 .width((screenWidth * 0.77f).dp)
                 .height(56.dp)
@@ -55,8 +62,7 @@ fun BottomChatBox2() {
                     width = (0.25).dp,
                     color = textFieldBorder,
                     shape = RoundedCornerShape(4.dp)
-                )
-            ,
+                ),
             placeholder = {
                 Text(
                     text = "Type your message here...",
@@ -75,12 +81,35 @@ fun BottomChatBox2() {
                 unfocusedIndicatorColor = Color.Transparent
             ),
             leadingIcon = {
-                Icon(imageVector = ImageVector.vectorResource(id = R.drawable.paperclip), contentDescription = null)
+                Icon(
+                    imageVector = ImageVector.vectorResource(id = R.drawable.paperclip),
+                    contentDescription = null
+                )
             }
         )
-        Spacer(modifier = Modifier.width((screenWidth*0.061).dp))
+        Spacer(modifier = Modifier.width((screenWidth * 0.061).dp))
 
-        Icon(imageVector = ImageVector.vectorResource(id = R.drawable.paperplanetilt), contentDescription = null)
+
+        IconButton(
+            modifier = Modifier.padding(start = 2.dp),
+            onClick = {
+                onSend(
+                    Message(
+                        messageText = typedMsg,
+                        timeStamp = System.currentTimeMillis(),
+                        isSentByMe = true,
+                        from = "Purab Modi",
+                        to = receiverName,
+                    )
+                )
+                typedMsg = ""
+            }) {
+            Icon(
+                imageVector = ImageVector.vectorResource(id = R.drawable.paperplanetilt),
+                contentDescription = null
+            )
+
+        }
     }
 
 }

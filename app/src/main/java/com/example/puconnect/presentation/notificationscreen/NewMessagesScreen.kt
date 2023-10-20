@@ -11,6 +11,7 @@ import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
 import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -20,8 +21,11 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavHostController
 import com.example.puconnect.R
+import com.example.puconnect.domain.model.Message
+import com.example.puconnect.presentation.ViewModels.MessageViewModel
 import com.example.puconnect.presentation.workscreen.common.MyApplications
 import com.example.puconnect.ui.theme.gilroy
 
@@ -30,9 +34,25 @@ import com.example.puconnect.ui.theme.gilroy
 fun NewMessagesScreen(
     navController: NavHostController
 ) {
-    Box (
+
+    val messageViewModel: MessageViewModel = hiltViewModel()
+//    LaunchedEffect(key1 = Unit) {
+//        messageViewModel.sendMessage(
+//            receiverId = "IcUDiDHMLXYUe1Hr9DFS22d917E2",
+//            message = Message(
+//                messageText = "Hey what are you doing?",
+//                timeStamp = System.currentTimeMillis(),
+//                isSentByMe = true,
+//                from = "Purab Modi",
+//                to = "squeesy",
+//            )
+//        )
+//
+//    }
+
+    Box(
         modifier = Modifier.fillMaxSize()
-    ){
+    ) {
         TopAppBar(
             modifier = Modifier
                 .fillMaxWidth()
@@ -76,5 +96,5 @@ fun NewMessagesScreen(
 @Preview(showSystemUi = false, showBackground = true)
 @Composable
 fun NewMessagesScreenPreview() {
-   // NewMessagesScreen()
+    // NewMessagesScreen()
 }

@@ -14,6 +14,7 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.navigation.NavHostController
 import com.example.puconnect.domain.model.Post
 import com.example.puconnect.domain.model.Skill
+import com.example.puconnect.domain.model.User
 import com.example.puconnect.mockdata.home.codeGuildQueList
 import com.example.puconnect.mockdata.home.designGuildQueList
 import com.example.puconnect.mockdata.home.siddhiQue
@@ -287,23 +288,14 @@ fun BottomNavGraph(navController: NavHostController, padding: PaddingValues) {
                     initialOffsetX = { 1000 }
                 ) + fadeIn(animationSpec = tween(300))
             }
-        ) { navBackStackEntry ->
-            val userName = navBackStackEntry.arguments?.getString("name")
-            val photoId = navBackStackEntry.arguments?.getString("photoId")
-            if (userName == null || photoId == null) {
-                Toast.makeText(
-                    LocalContext.current,
-                    "userId is required for navigation",
-                    Toast.LENGTH_SHORT
-                )
-                    .show()
-            } else {
-                MessageScreen(
-                    navController = navController,
-                    userName = userName,
-                    userPhoto = photoId.toInt()
-                )
-            }
+        ) {
+            val user =
+                navController.previousBackStackEntry?.savedStateHandle?.get<User>("userDetails")
+
+            MessageScreen(
+                navController = navController,
+                userDetails = user ?: User()
+            )
 
 
         }
